@@ -271,7 +271,44 @@ namespace Pt_For_Me
                 response.Message = ex.Message;
                 return response;
             }
-    }
+
+        }
+
+        public  ResponseModel<object> GetTrainerByTrainerID(int TrainerID)
+        {
+
+            ResponseModel<object> response = new ResponseModel<object>();
+
+            try
+            {
+                var obj = _context.GetAllTrainers_Result.FromSqlInterpolated<GetAllTrainers_Result>($"EXECUTE SP_GetTrainerByTrainerID {TrainerID}");
+
+                var result = from row in obj.AsEnumerable()
+                             group row by (new
+                             {
+                                 row.TrainerID,
+                                 row.Firstname,
+                                 row.Lastname,
+                                 row.Bio,
+                                 row.Experience,
+                                 row.specialty,
+                             }) into Group
+                             let row = Group.First()
+                             select new
+                             {
+                                 Trainer = Group.Select(t => new { t.Firstname, t.Lastname, t.Bio , t.specialty , t.Experience })
+                             };
+                response.Data = result.ToList();
+                response.IsSuccess = true;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                return response;
+            }
+        }
 
     }
 }

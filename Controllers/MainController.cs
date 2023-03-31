@@ -113,5 +113,13 @@ namespace Pt_For_Me.Controllers
             var result = _PtForMeRepository.GetAllTrainer();
             return Ok(result);
         }
+
+        [Route("GetTrainerByTrainerID")]
+        [HttpGet]
+        public IActionResult GetTrainerByTrainerID([FromBody] Trainer trainer)
+        {
+            var result = _PtForMeRepository.GetTrainerByTrainerID(trainer.id);
+            return Ok(result);
+        }
     }
 }

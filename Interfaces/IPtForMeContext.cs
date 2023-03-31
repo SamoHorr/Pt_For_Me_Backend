@@ -28,6 +28,6 @@ namespace Pt_For_Me.Interfaces
         //STORED PROCEDURES
         //for client display
         DbSet<GetAllTrainers_Result> GetAllTrainers_Result { get; set; }
-
+        DbSet<GetTrainerByTrainerID_Result> GetTrainersByTrainerID_Result { get; set; }
     }
 }

@@ -13,6 +13,7 @@ namespace Pt_For_Me.Interfaces
         ResponseModel<bool> CheckUser(string DeviceID, string username, string password);
         ResponseModel<bool> CheckTrainer(string DeviceID, string username, string password);
         ResponseModel<object> GetAllTrainer();
+        ResponseModel<object> GetTrainerByTrainerID(int TrainerID);
 
     }
 
