@@ -145,5 +145,13 @@ namespace Pt_For_Me.Controllers
             var result = _PtForMeRepository.GetTrainerByTrainerID(trainer.id);
             return Ok(result);
         }
+
+        [Route("ClientAddHealthIssue")]
+        [HttpPost]
+        public IActionResult AddClientHealthRiskOrInjury([FromBody] Health health)
+        {
+            var result = _PtForMeRepository.AddClientHealthRiskOrInjury(health.userID, health.healthRisk, health.Injury);
+            return Ok(result);
+        }
     }
 }

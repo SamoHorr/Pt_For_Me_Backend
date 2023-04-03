@@ -312,5 +312,45 @@ namespace Pt_For_Me
             }
         }
 
+        public ResponseModel<bool> AddClientHealthRiskOrInjury(int UserID , string healthRisk , string injury)
+        {
+            ResponseModel<bool> response = new ResponseModel<bool>();
+
+            try
+            {
+                response.Data = false;
+                response.IsSuccess = true;
+                response.Message = "Unable to save the health risk added to this client. Try again later.";
+
+                Table_Health goal = _context.Table_Health.Where(t => t.UserID == UserID).FirstOrDefault();
+                if (goal == null)
+                {
+
+                    Table_Health newHealth = new Table_Health
+                    {
+                        UserID = UserID,
+                        HealthRisk = healthRisk,
+                        Injury = injury,
+
+                    };
+                    //saving the new user to the db
+                    _context.Table_Health.Add(newHealth);
+                    _context.SaveChanges();
+
+                    response.Data = true;
+                    response.Message = "Health risk and/or injury added successfully";
+                }
+                return response;
+
+
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                return response;
+            }
+        }
+
     }
 }

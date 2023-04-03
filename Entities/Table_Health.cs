@@ -4,7 +4,7 @@
     {
         public int ID { get; set; }
         public int UserID { get; set; }
-        public String HealthRisk { get; set; }
+        public string HealthRisk { get; set; }
         public string  Injury { get; set; }
     }
 }
