@@ -9,6 +9,7 @@
         public string username { get; set; }
         public string password { get; set; }
         public string email { get; set; }
+        public string profileURL { get; set; }
         public string bio { get; set; }
         public int experience { get; set; }
         public int specialty { get; set; }

@@ -9,6 +9,8 @@
 
         public string Username { get; set; }
         public string Password { get; set; }
+
+        public string ProfileURL { get; set; }
         public string Email { get; set; }
         public string Device_Token { get; set; }
     }

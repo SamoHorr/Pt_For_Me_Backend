@@ -14,7 +14,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="App_Data\" />
+    <Folder Include="App_Data\TrainerCV\" />
+    <Folder Include="App_Data\TrainerCertificate\" />
+    <Folder Include="App_Data\TrainerProfile\" />
+    <Folder Include="App_Data\UserProfile\" />
   </ItemGroup>
 
 </Project>

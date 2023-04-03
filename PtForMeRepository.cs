@@ -31,7 +31,7 @@ namespace Pt_For_Me
             }
         }
 
-        public ResponseModel<bool> CreateUser(string firstname, string lastname, string DOB, string username, string password, string email, string DeviceToken)
+        public ResponseModel<bool> CreateUser(string firstname, string lastname, string DOB, string username, string password, string profileURL ,string email, string DeviceToken)
         {
             ResponseModel<bool> response = new ResponseModel<bool>();
 
@@ -55,6 +55,7 @@ namespace Pt_For_Me
                         Email = email,
                         FirstName = firstname,
                         LastName = lastname,
+                        ProfileURL = profileURL,
                         DOB = DOB,
                     };
                     //saving the new user to the db
@@ -74,7 +75,7 @@ namespace Pt_For_Me
             }
         }
 
-        public ResponseModel<bool> CreateTrainer(string firstname, string lastname, string username, string password, string email, string bio, int experience, int specialty, string DeviceToken, string imageCertificateURL, string imageCvURL)
+        public ResponseModel<bool> CreateTrainer(string firstname, string lastname, string username, string password, string email, string profileUrl ,string bio, int experience, int specialty, string DeviceToken, string imageCertificateURL, string imageCvURL)
         {
             ResponseModel<bool> response = new ResponseModel<bool>();
 
@@ -104,6 +105,7 @@ namespace Pt_For_Me
                         Experience = experience,
                         Device_Token = DeviceToken,
                         //the images
+                        ProfileURL = profileUrl,
                         CertificateURL = imageCertificateURL,
                         CVURL = imageCvURL,
 
@@ -259,8 +261,8 @@ namespace Pt_For_Me
                              let row = Group.First()
                              select new
                              {
-                                 TrainerInfo = Group.Key,
-                                 Trainer = Group.Select(x => new { x.Firstname, x.Lastname, x.Bio })
+                                 //TrainerInfo = Group.Key,
+                                 Trainer = Group.Select(t => new { t.TrainerID ,  t.Firstname, t.Lastname, t.Bio, t.specialty , t.Experience })
                              };
                 response.Data = result.ToList().Take(50);
                 response.IsSuccess = true;
@@ -296,7 +298,7 @@ namespace Pt_For_Me
                              let row = Group.First()
                              select new
                              {
-                                 Trainer = Group.Select(t => new { t.Firstname, t.Lastname, t.Bio , t.specialty , t.Experience })
+                                 Trainer = Group.Select(t => new { t.TrainerID , t.Firstname, t.Lastname, t.Bio , t.specialty , t.Experience })
                              };
                 response.Data = result.ToList();
                 response.IsSuccess = true;

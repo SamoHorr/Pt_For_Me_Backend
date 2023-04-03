@@ -35,10 +35,28 @@ namespace Pt_For_Me.Controllers
 
         [Route("CreateNewClient")]
         [HttpPost]
-        public IActionResult CreateNewClient([FromBody] User user)
+        public IActionResult CreateNewClient([FromForm] User user , [FromForm(Name = "ProfilePic")] IFormFile imageProfile)
+
         {
-            // string firstname , string lastname , string DOB , string username , string password , string email , string DeviceToken
-            var result = _PtForMeRepository.CreateUser(user.FirstName, user.LastName, user.DOB, user.username, user.password, user.Email, user.DeviceToken);
+            //changing the profile pictures received names and creating the necessary paths
+            FileInfo fiProfile = new FileInfo(imageProfile.FileName);
+
+            var newCertificateFileName = "ProfilePic_" + DateTime.Now.TimeOfDay.Milliseconds + fiProfile.Extension;
+            var rootPath = Path.Combine(_enviroment.ContentRootPath, "App_Data/UserProfile");
+            if (!Directory.Exists(rootPath))
+            {
+                Directory.CreateDirectory(rootPath);
+            }
+            var pathProfile = Path.Combine("", _enviroment.ContentRootPath + "App_Data\\UserProfile\\" + newCertificateFileName);
+           
+            //to store the images received in the App_data folder inside the project
+            var streamImageCertificate = new FileStream(pathProfile, FileMode.Create, FileAccess.Write);
+            imageProfile.CopyTo(streamImageCertificate);
+
+            //for the methode
+            user.profileURL = pathProfile;
+           
+            var result = _PtForMeRepository.CreateUser(user.FirstName, user.LastName, user.DOB, user.username, user.password, user.profileURL ,  user.Email, user.DeviceToken);
             return Ok(result);
         }
 
@@ -62,7 +80,7 @@ namespace Pt_For_Me.Controllers
         [Route ("CreateNewTrainer")]
         [ApiExplorerSettings(IgnoreApi = true)]
         [HttpPost]
-        public IActionResult CreateNewTrainer([FromForm] Trainer trainer , [FromForm(Name = "Certificate")] IFormFile imageCertificate, [FromForm(Name = "CV")] IFormFile imageCV)
+        public IActionResult CreateNewTrainer([FromForm] Trainer trainer , [FromForm(Name = "Certificate")] IFormFile imageCertificate, [FromForm(Name = "CV")] IFormFile imageCV , [FromForm(Name = "ProfilePic")] IFormFile imageProfile)
         {
 
             if (trainer == null)
@@ -70,31 +88,37 @@ namespace Pt_For_Me.Controllers
                 return BadRequest();
             }
 
-            //cnverting the images received into urls
+            //converting the images received into urls
             FileInfo fiCertificate = new FileInfo(imageCertificate.FileName);
             FileInfo fiCV = new FileInfo(imageCV.FileName);
+            FileInfo fiProfile = new FileInfo(imageProfile.FileName);
 
             var newCertificateFileName = "Certificate_" + DateTime.Now.TimeOfDay.Milliseconds + fiCertificate.Extension;
-            var newCvFileName = "CV" + DateTime.Now.TimeOfDay.Milliseconds + fiCV.Extension;
+            var newCvFileName = "CV_" + DateTime.Now.TimeOfDay.Milliseconds + fiCV.Extension;
+            var newProfileFileName = "Profile_" + DateTime.Now.TimeOfDay.Milliseconds + fiProfile.Extension;
+
             var rootPath = Path.Combine(_enviroment.ContentRootPath, "App_Data");
             if (!Directory.Exists(rootPath))
             {
                 Directory.CreateDirectory(rootPath);
             }
-            var pathCertificate = Path.Combine("", _enviroment.ContentRootPath + "App_Data\\" + newCertificateFileName);
-            var pathCV = Path.Combine("", _enviroment.ContentRootPath + "App_Data\\" + newCvFileName);
+            var pathCertificate = Path.Combine("", _enviroment.ContentRootPath + "App_Data\\TrainerCertificate\\" + newCertificateFileName);
+            var pathCV = Path.Combine("", _enviroment.ContentRootPath + "App_Data\\TrainerCV\\" + newCvFileName);
+            var pathProfile = Path.Combine("", _enviroment.ContentRootPath + "App_Data\\TrainerProfile\\" + newProfileFileName);
             //to store the images received in the App_data folder inside the project
             var streamImageCertificate = new FileStream(pathCertificate, FileMode.Create, FileAccess.Write);
             var streamImageCv = new FileStream(pathCV, FileMode.Create, FileAccess.Write);
+            var streamImageProfile = new FileStream(pathProfile, FileMode.Create, FileAccess.Write);
             imageCertificate.CopyTo(streamImageCertificate);
             imageCV.CopyTo(streamImageCv);
+            imageProfile.CopyTo(streamImageProfile);
 
             trainer.certificateUrl = pathCertificate;
             trainer.cvURL = pathCV;
-
+            trainer.profileURL = pathProfile;
             //(string firstname, string lastname, string username  , string password , string email, string bio, int experience, int specialty, string DeviceToken , string imageCertificateURL , string  imageCvURL)
             //using the function in repo to create user
-            var result = _PtForMeRepository.CreateTrainer(trainer.firstname, trainer.lastname, trainer.username, trainer.password, trainer.email, trainer.bio, trainer.experience, trainer.specialty, trainer.deviceToken, trainer.certificateUrl, trainer.cvURL);
+            var result = _PtForMeRepository.CreateTrainer(trainer.firstname, trainer.lastname, trainer.username, trainer.password, trainer.email, trainer.profileURL ,  trainer.bio, trainer.experience, trainer.specialty, trainer.deviceToken, trainer.certificateUrl, trainer.cvURL);
             return Ok(result);
         }
 
@@ -107,7 +131,7 @@ namespace Pt_For_Me.Controllers
         }
 
         [Route("GetAllAvailableTrainers")]
-        [HttpPost]
+        [HttpGet]
         public IActionResult GetAllTrainer()
         {
             var result = _PtForMeRepository.GetAllTrainer();

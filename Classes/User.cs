@@ -9,6 +9,7 @@
         public string LastName { get; set; }
         public string DOB { get; set; }
         public string Email { get; set; }
+        public string profileURL { get; set; }
         public string DeviceToken { get; set; }
        // public string goal { get; set; }
        
