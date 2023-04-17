@@ -261,7 +261,7 @@ namespace Pt_For_Me
                              let row = Group.First()
                              select new
                              {
-                                 //TrainerInfo = Group.Key,
+                                 TrainerInfo = Group.Key,
                                  Trainer = Group.Select(t => new { t.TrainerID ,  t.Firstname, t.Lastname, t.Bio, t.specialty , t.Experience })
                              };
                 response.Data = result.ToList().Take(50);
@@ -322,7 +322,7 @@ namespace Pt_For_Me
                 response.IsSuccess = true;
                 response.Message = "Unable to save the health risk added to this client. Try again later.";
 
-                Table_Health goal = _context.Table_Health.Where(t => t.UserID == UserID).FirstOrDefault();
+                Table_Health goal = _context.Table_Health.Where(h => h.UserID == UserID).FirstOrDefault();
                 if (goal == null)
                 {
 
@@ -352,5 +352,45 @@ namespace Pt_For_Me
             }
         }
 
+        public ResponseModel<bool> AddClientGoal(int UserID, string description, int targetWeight, DateTime date)
+        {
+            ResponseModel<bool> response = new ResponseModel<bool>();
+
+            try
+            {
+                response.Data = false;
+                response.IsSuccess = true;
+                response.Message = "Unable to save the goals to this client. Try again later.";
+
+                Table_Goal goal = _context.Table_Goal.Where(g => g.UserID == UserID).FirstOrDefault();
+                if (goal == null)
+                {
+
+                    Table_Goal newHealth = new Table_Goal
+                    {
+                        UserID = UserID,
+                        Description = description,
+                        TargetWeight = targetWeight,
+                        Date = date,
+
+                    };
+                    //saving the  user to the db
+                    _context.Table_Goal.Add(newHealth);
+                    _context.SaveChanges();
+
+                    response.Data = true;
+                    response.Message = "Goal added successfully";
+                }
+                return response;
+
+
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                return response;
+            }
+        }
     }
 }
