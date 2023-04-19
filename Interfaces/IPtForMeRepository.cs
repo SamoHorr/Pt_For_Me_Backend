@@ -10,6 +10,7 @@ namespace Pt_For_Me.Interfaces
         ResponseModel<bool> CreateTrainer(string firstname, string lastname, string username , string password , string email, string profileURL ,  string bio, int experience , int specialty , string DeviceToken, string imageCertificateURL, string imageCvURL);
         ResponseModel<bool> LoginUser(string username, string password);
         ResponseModel<bool> LoginTrainer(string username, string password);
+        ResponseModel<int> LoginWebsite(string username, string password);
         ResponseModel<bool> CheckUser(string DeviceID, string username, string password);
         ResponseModel<bool> CheckTrainer(string DeviceID, string username, string password);
         ResponseModel<object> GetAllTrainer();

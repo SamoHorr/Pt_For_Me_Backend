@@ -40,7 +40,6 @@ namespace Pt_For_Me.Controllers
         {
             //changing the profile pictures received names and creating the necessary paths
             FileInfo fiProfile = new FileInfo(imageProfile.FileName);
-
             var newCertificateFileName = "ProfilePic_" + DateTime.Now.TimeOfDay.Milliseconds + fiProfile.Extension;
             var rootPath = Path.Combine(_enviroment.ContentRootPath, "App_Data/UserProfile");
             if (!Directory.Exists(rootPath))
@@ -65,6 +64,14 @@ namespace Pt_For_Me.Controllers
         public IActionResult LoginUser([FromBody] User user)
         {
             var result = _PtForMeRepository.LoginUser(user.username, user.password);
+            return Ok(result);
+        }
+
+        [Route("WebsiteLogin")]
+        [HttpPost]
+        public IActionResult LoginWebsite([FromBody] User user)
+        {
+            var result = _PtForMeRepository.LoginWebsite(user.username, user.password);
             return Ok(result);
         }
         //[Route("CreateNewTrainer")]

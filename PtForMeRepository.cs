@@ -183,6 +183,37 @@ namespace Pt_For_Me
                 return response;
             }
         }
+
+        public ResponseModel<int> LoginWebsite(string username, string password)
+        {
+            ResponseModel<int> response = new ResponseModel<int>();
+
+            try
+            {
+                response.Data = 0;
+                response.IsSuccess = true;
+                response.Message = "INVALID INFORMATION";
+
+                if (_context.Table_User.Where(u => u.Username == username && u.Password == password).FirstOrDefault() != null)
+                {
+                    response.Data = 1;
+                    response.Message = "CLIENT LOGIN SUCCESSFUL";
+                }  else if ( username == "admin" && password == "admin")
+                {
+                    response.Data = 2;
+                    response.Message = "ADMIN LOGIN SUCCESSFUL";
+                }
+
+                return response;
+
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                return response;
+            }
+        }
         public ResponseModel<bool> CheckUser(string DeviceID, string username, string password)
         {
             ResponseModel<bool> response = new ResponseModel<bool>();
