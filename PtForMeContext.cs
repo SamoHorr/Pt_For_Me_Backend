@@ -37,6 +37,7 @@ namespace Pt_For_Me
         //models for client display
         public virtual DbSet<GetAllTrainers_Result> GetAllTrainers_Result { get; set; }
         public virtual DbSet<GetTrainerByTrainerID_Result> GetTrainersByTrainerID_Result { get; set; }
+        public virtual DbSet<GetAllApprovedTrainers_Result> GetAllApprovedTrainers_Result { get; set; }
         protected override void OnModelCreating (ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Table_User>(entity =>
@@ -57,6 +58,11 @@ namespace Pt_For_Me
             modelBuilder.Entity<GetTrainerByTrainerID_Result>(entity =>
             {
                 entity.HasKey(entity => entity.TrainerID);
+            });
+
+            modelBuilder.Entity<GetAllApprovedTrainers_Result>(entity =>
+            {
+                entity.HasKey(entity =>entity.TrainerID);
             });
         }
     }

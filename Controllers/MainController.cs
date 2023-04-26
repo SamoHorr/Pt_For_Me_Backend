@@ -141,7 +141,15 @@ namespace Pt_For_Me.Controllers
         [HttpGet]
         public IActionResult GetAllTrainer()
         {
-            var result = _PtForMeRepository.GetAllTrainer();
+            var result = _PtForMeRepository.GetAllTrainers();
+            return Ok(result);
+        }
+
+        [Route ("GetAllApprovedTrainers")]
+        [HttpGet]
+        public IActionResult GetAllApprovedTrainers()
+        {
+            var result = _PtForMeRepository.GetAllApprovedTrainers();
             return Ok(result);
         }
 
@@ -167,6 +175,26 @@ namespace Pt_For_Me.Controllers
         {
             var result = _PtForMeRepository.AddClientGoal(goal.userID , goal.description , goal.targetWeight , goal.date);
             return Ok(result);
+        }
+
+        [HttpGet("DownloadImage", Name = "DownloadImage")]
+        public FileResult DownloadImage(string filename)
+        {
+            string dataDir = AppDomain.CurrentDomain.GetData("AppDataDirectory").ToString();
+            if (filename != null)
+            {
+                //Build the File Path.
+                string path = dataDir + "\\" + filename;
+                //Read the File data into Byte Array.
+                byte[] bytes = System.IO.File.ReadAllBytes(path);
+                //Send the File to Download.
+                return File(bytes, "application/octet-stream", filename);
+            }
+            else
+            {
+                byte[] bytes = System.IO.File.ReadAllBytes(dataDir + "\\avatar.png");
+                return File(bytes, "application/octet-stream", "avatar.png");
+            }
         }
     }
 }

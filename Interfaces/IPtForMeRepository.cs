@@ -13,7 +13,8 @@ namespace Pt_For_Me.Interfaces
         ResponseModel<int> LoginWebsite(string username, string password);
         ResponseModel<bool> CheckUser(string DeviceID, string username, string password);
         ResponseModel<bool> CheckTrainer(string DeviceID, string username, string password);
-        ResponseModel<object> GetAllTrainer();
+        ResponseModel<object> GetAllTrainers();
+        ResponseModel<object> GetAllApprovedTrainers();
         ResponseModel<object> GetTrainerByTrainerID(int TrainerID);
         ResponseModel<bool> AddClientHealthRiskOrInjury(int UserID, string healthRisk, string injury);
         ResponseModel<bool> AddClientGoal(int UserID , string description, int targetWeight, DateTime date); 
