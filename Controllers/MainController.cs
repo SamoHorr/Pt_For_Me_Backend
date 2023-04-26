@@ -159,6 +159,14 @@ namespace Pt_For_Me.Controllers
             return Ok(result);
         }
 
+        [Route("GetAllPendingTrainers")]
+        [HttpGet]
+        public IActionResult GetAllPendingTrainers()
+        {
+            var result = _PtForMeRepository.GetAllPendingTrainers();
+            return Ok(result);
+        }
+
         [Route("GetTrainerByTrainerID")]
         [HttpGet]
         public IActionResult GetTrainerByTrainerID([FromBody] Trainer trainer)
@@ -183,25 +191,6 @@ namespace Pt_For_Me.Controllers
             return Ok(result);
         }
 
-        [HttpGet("DownloadImage", Name = "DownloadImage")]
-        public FileResult DownloadImage(string filename)
-        {
-            string dataDir = AppDomain.CurrentDomain.GetData("AppDataDirectory").ToString();
-            if (filename != null)
-            {
-                //Build the File Path.
-                string path = dataDir + "\\" + filename;
-                //Read the File data into Byte Array.
-                byte[] bytes = System.IO.File.ReadAllBytes(path);
-                //Send the File to Download.
-                return File(bytes, "application/octet-stream", filename);
-            }
-            else
-            {
-                byte[] bytes = System.IO.File.ReadAllBytes(dataDir + filename);
-                return File(bytes, "application/octet-stream", "uploadedImage.png");
-            }
-        }
 
         //api for images same logic just different folders (allows to call images as api solves issue of images filepath local to one pc)
         [Route("profilesUser/{fileName}")]

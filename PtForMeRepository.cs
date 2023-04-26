@@ -343,6 +343,42 @@ namespace Pt_For_Me
 
         }
 
+        public ResponseModel<object> GetAllPendingTrainers()
+        {
+            ResponseModel<object> response = new ResponseModel<object>();
+
+            try
+            {
+                var obj = _context.GetAllPendingTrainers_Result.FromSqlInterpolated<GetAllPendingTrainers_Result>($"EXECUTE SP_GetAllPendingTrainers");
+
+                var result = from row in obj.AsEnumerable()
+                             group row by (new
+                             {
+                                 row.TrainerID,
+                                 row.Firstname,
+                                 row.Lastname,
+                                 row.Profile,
+                                 row.Certificate,
+                                 row.CV,
+                             }) into Group
+                             let row = Group.First()
+                             select new
+                             {
+                                 TrainerInfo = Group.Key,
+                             };
+                response.Data = result.ToList().Take(50);
+                response.IsSuccess = true;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                return response;
+            }
+
+        }
+
         public  ResponseModel<object> GetTrainerByTrainerID(int TrainerID)
         {
 
