@@ -39,7 +39,7 @@ namespace Pt_For_Me
             {
                 response.Data = false;
                 response.IsSuccess = true;
-                response.Message = "ERROR OCCURED - INVALID INFORMATION";
+                response.Message = "ERROR OCCURED - INVALID INFORMATION ";
 
                 Table_User user = _context.Table_User.Where(u => u.Device_Token == DeviceToken).FirstOrDefault();
 

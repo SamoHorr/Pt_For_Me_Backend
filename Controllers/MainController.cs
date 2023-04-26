@@ -53,7 +53,8 @@ namespace Pt_For_Me.Controllers
             imageProfile.CopyTo(streamImageCertificate);
 
             //for the methode
-            user.profileURL = pathProfile;
+            var imagePath = "/api/profilesUser/" + newCertificateFileName;
+            user.profileURL = imagePath;
            
             var result = _PtForMeRepository.CreateUser(user.FirstName, user.LastName, user.DOB, user.username, user.password, user.profileURL ,  user.Email, user.DeviceToken);
             return Ok(result);
@@ -120,9 +121,14 @@ namespace Pt_For_Me.Controllers
             imageCV.CopyTo(streamImageCv);
             imageProfile.CopyTo(streamImageProfile);
 
-            trainer.certificateUrl = pathCertificate;
-            trainer.cvURL = pathCV;
-            trainer.profileURL = pathProfile;
+            //for the api methode
+            var imageProfilePath = "/api/profilesUser/" + newProfileFileName;
+            var imageCVPath = "/api/profilesUser/" + newCvFileName;
+            var imageCertificatePath = "/api/profilesUser/" + newCertificateFileName;
+            //db
+            trainer.certificateUrl = imageCertificatePath;
+            trainer.cvURL = imageCVPath;
+            trainer.profileURL = imageProfilePath;
             //(string firstname, string lastname, string username  , string password , string email, string bio, int experience, int specialty, string DeviceToken , string imageCertificateURL , string  imageCvURL)
             //using the function in repo to create user
             var result = _PtForMeRepository.CreateTrainer(trainer.firstname, trainer.lastname, trainer.username, trainer.password, trainer.email, trainer.profileURL ,  trainer.bio, trainer.experience, trainer.specialty, trainer.deviceToken, trainer.certificateUrl, trainer.cvURL);
@@ -192,9 +198,63 @@ namespace Pt_For_Me.Controllers
             }
             else
             {
-                byte[] bytes = System.IO.File.ReadAllBytes(dataDir + "\\avatar.png");
-                return File(bytes, "application/octet-stream", "avatar.png");
+                byte[] bytes = System.IO.File.ReadAllBytes(dataDir + filename);
+                return File(bytes, "application/octet-stream", "uploadedImage.png");
             }
+        }
+
+        //api for images same logic just different folders (allows to call images as api solves issue of images filepath local to one pc)
+        [Route("profilesUser/{fileName}")]
+        [HttpGet]
+        public IActionResult GetProfileImage(string fileName)
+        {
+            var filePath = Path.Combine(_enviroment.ContentRootPath, "App_Data/UserProfile", fileName);
+            if (!System.IO.File.Exists(filePath))
+            {
+                return NotFound();
+            }
+            var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+            return File(fileStream, "image/jpeg");
+        }
+
+
+        [Route("profileTrainer/{fileName}")]
+        [HttpGet]
+        public IActionResult GetTrainerProfileImage(string fileName)
+        {
+            var filePath = Path.Combine(_enviroment.ContentRootPath, "App_Data/TrainerProfile", fileName);
+            if (!System.IO.File.Exists(filePath))
+            {
+                return NotFound();
+            }
+            var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+            return File(fileStream, "image/jpeg");
+        }
+
+        [Route("cvTrainer/{fileName}")]
+        [HttpGet]
+        public IActionResult GetTrainerCVImage(string fileName)
+        {
+            var filePath = Path.Combine(_enviroment.ContentRootPath, "App_Data/TrainerCV", fileName);
+            if (!System.IO.File.Exists(filePath))
+            {
+                return NotFound();
+            }
+            var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+            return File(fileStream, "image/jpeg");
+        }
+
+        [Route("certificateTrainer/{fileName}")]
+        [HttpGet]
+        public IActionResult GetTrainerDiplomaImage(string fileName)
+        {
+            var filePath = Path.Combine(_enviroment.ContentRootPath, "App_Data/TrainerCertificate", fileName);
+            if (!System.IO.File.Exists(filePath))
+            {
+                return NotFound();
+            }
+            var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+            return File(fileStream, "image/jpeg");
         }
     }
 }
