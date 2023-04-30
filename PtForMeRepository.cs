@@ -378,7 +378,40 @@ namespace Pt_For_Me
             }
 
         }
+        public ResponseModel<object> GetTrainerVerificationStatus(int TrainerID)
+        {
+            ResponseModel<object> response = new ResponseModel<object>();
+            try
+            {
+                var obj = _context.GetTrainerVerificationStatus_Result.FromSqlInterpolated<GetTrainerVerificationStatus_Result>($"Execute SP_GetTrainerVerificationStatus {TrainerID}");
+                var result = from row in obj.AsEnumerable()
+                             group row by (new
+                             {
+                                 row.ID,
+                                 row.Firstname,
+                                 row.Lastname,
+                                 row?.isAccepted,
+                                 row.Status,
 
+                             }) into Group
+                             let row = Group.First()
+                             select new
+                             {
+                                 TrainerInfo = Group.Key,
+                             };
+                response.Data = result.ToList().Take(50);
+                response.IsSuccess = true;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                return response;
+            }
+
+        }
+        
         public  ResponseModel<object> GetTrainerByTrainerID(int TrainerID)
         {
 

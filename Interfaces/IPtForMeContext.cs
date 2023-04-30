@@ -31,6 +31,11 @@ public interface IPtForMeContext
     DbSet<GetTrainerByTrainerID_Result> GetTrainersByTrainerID_Result { get; set; }
         DbSet<GetAllApprovedTrainers_Result> GetAllApprovedTrainers_Result { get; set; }
 
+        //for the trainer display
+        DbSet<GetTrainerVerificationStatus_Result> GetTrainerVerificationStatus_Result { get; set;}
+
+        //for the website admin
         DbSet<GetAllPendingTrainers_Result> GetAllPendingTrainers_Result { get; set; }
+
 }
 }

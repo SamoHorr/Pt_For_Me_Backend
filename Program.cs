@@ -1,6 +1,8 @@
 using Pt_For_Me;
 using Pt_For_Me.Interfaces;
 using Microsoft.EntityFrameworkCore;
+//using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -9,6 +11,28 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+
+/*public void ConfigureServices(IServiceCollection services)
+{
+    services.AddControllers();
+    services.AddDbContext<PtForMeContext>(options =>
+    {
+        options.UseSqlServer(Configuration.GetConnectionString("PtForMeDB"),
+          sqlServerOptionsAction: sqlOptions =>
+          {
+              sqlOptions.EnableRetryOnFailure();
+          }
+            );
+    });
+}*/
+
+
+//cors
+builder.Services.AddCors(p => p.AddPolicy("corspolicy", build =>
+{
+    build.WithOrigins("*").AllowAnyMethod().AllowAnyHeader();
+}));
 
 //refrences for interface & repository
 builder.Services.AddScoped<IPtForMeRepository, PtForMeRepository>();
@@ -41,6 +65,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseCors("corspolicy");
 
 app.MapControllers();
 

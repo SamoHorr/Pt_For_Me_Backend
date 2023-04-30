@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Pt_For_Me.Interfaces;
 using Pt_For_Me.Classes;
+using Microsoft.AspNetCore.Cors;
 
 namespace Pt_For_Me.Controllers
 {
@@ -70,6 +71,7 @@ namespace Pt_For_Me.Controllers
 
         [Route("WebsiteLogin")]
         [HttpPost]
+        //[EnableCors(AllowAllOrigins)]
         public IActionResult LoginWebsite([FromBody] User user)
         {
             var result = _PtForMeRepository.LoginWebsite(user.username, user.password);
@@ -164,6 +166,14 @@ namespace Pt_For_Me.Controllers
         public IActionResult GetAllPendingTrainers()
         {
             var result = _PtForMeRepository.GetAllPendingTrainers();
+            return Ok(result);
+        }
+
+        [Route("GetTrainerVerificationStatus")]
+        [HttpGet]
+        public IActionResult GetTrainerVerificationStatus([FromBody] Trainer trainer )
+        {
+            var result = _PtForMeRepository.GetTrainerVerificationStatus(trainer.id);
             return Ok(result);
         }
 

@@ -34,11 +34,12 @@ namespace Pt_For_Me
         public virtual DbSet<Table_Package> Table_Package { get; set; }
 
 
-        //models for client display
+        //models 
         public virtual DbSet<GetAllTrainers_Result> GetAllTrainers_Result { get; set; }
         public virtual DbSet<GetTrainerByTrainerID_Result> GetTrainersByTrainerID_Result { get; set; }
         public virtual DbSet<GetAllApprovedTrainers_Result> GetAllApprovedTrainers_Result { get; set; }
         public virtual DbSet<GetAllPendingTrainers_Result> GetAllPendingTrainers_Result { get; set; }
+        public virtual DbSet<GetTrainerVerificationStatus_Result> GetTrainerVerificationStatus_Result { get; set; }
         protected override void OnModelCreating (ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Table_User>(entity =>
@@ -70,6 +71,12 @@ namespace Pt_For_Me
             {
                 entity.HasKey(entity => entity.TrainerID);
             });
+
+            modelBuilder.Entity<GetTrainerVerificationStatus_Result>(entity =>
+            {
+                entity.HasKey(entity => entity.ID);
+            });
+
         }
     }
 }
