@@ -13,7 +13,8 @@
         public string Email { get; set; }
         public int Experience { get; set; }
         public string Device_Token { get; set; }
-
+        public bool ?Status { get; set; }
+        public bool ?isAccepted { get; set; }
 
         //images for the documents
         //public IFormFile CertificateUri { get; set; }

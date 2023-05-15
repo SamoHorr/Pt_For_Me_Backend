@@ -8,5 +8,6 @@
         public string Bio { get; set; }
         public int Experience { get; set; }
         public string Specialty { get; set; }
+        public string Trainer_Profile { get; set; }
     }
 }

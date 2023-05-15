@@ -20,7 +20,11 @@ namespace Pt_For_Me.Interfaces
         ResponseModel<object> GetTrainerByTrainerID(int TrainerID);
         ResponseModel<bool> AddClientHealthRiskOrInjury(int UserID, string healthRisk, string injury);
         ResponseModel<bool> AddClientGoal(int UserID , string description, int targetWeight, DateTime date); 
+        ResponseModel<object> GetGeneralPackages ();
+        ResponseModel<bool> AcceptTrainer(int TrainerID);
+        ResponseModel<bool> DeclineTrainer(int TrainerID);
     }
+
 
     
 }

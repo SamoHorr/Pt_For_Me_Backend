@@ -20,7 +20,6 @@ namespace Pt_For_Me
 
             try
             {
-
                 response.Data = _context.Table_User.ToList();
                 response.IsSuccess = true;
                 return response;
@@ -31,6 +30,21 @@ namespace Pt_For_Me
             }
         }
 
+        public ResponseModel<object> GetGeneralPackages()
+        {
+            ResponseModel<object> response = new ResponseModel<object>();
+            try
+            {
+                response.Data = _context.Table_Package.ToList();
+                response.IsSuccess=true;
+                return response;
+            }
+            catch
+            {
+                response.IsSuccess = false;
+                return response;
+            }
+        }
         public ResponseModel<bool> CreateUser(string firstname, string lastname, string DOB, string username, string password, string profileURL ,string email, string DeviceToken)
         {
             ResponseModel<bool> response = new ResponseModel<bool>();
@@ -41,7 +55,13 @@ namespace Pt_For_Me
                 response.IsSuccess = true;
                 response.Message = "ERROR OCCURED - INVALID INFORMATION ";
 
-                Table_User user = _context.Table_User.Where(u => u.Device_Token == DeviceToken).FirstOrDefault();
+                Table_User user = _context.Table_User.Where(u => u.Device_Token == DeviceToken ).FirstOrDefault();
+                //checking for similar usernames in db 
+                if (_context.Table_User.Any(u => u.Username == username))
+                {
+                    response.Message = "Username already exists";
+                    return response;
+                }
 
                 //if null adding the info to the appropriate fields
                 if (user == null)
@@ -108,6 +128,8 @@ namespace Pt_For_Me
                         ProfileURL = profileUrl,
                         CertificateURL = imageCertificateURL,
                         CVURL = imageCvURL,
+                        isAccepted = false,
+                        Status = false, 
 
                     };
                     //saving the new user to the db
@@ -277,7 +299,7 @@ namespace Pt_For_Me
 
             try
             {
-                var obj = _context.GetAllTrainers_Result.FromSqlInterpolated<GetAllTrainers_Result>($"EXECUTE SP_GetAllTrainers ");
+                var obj = _context.GetAllTrainers_Result.FromSqlInterpolated<GetAllTrainers_Result>($"EXECUTE SP_GetAllTrainers");
 
                 var result = from row in obj.AsEnumerable()
                              group row by (new
@@ -313,24 +335,20 @@ namespace Pt_For_Me
 
             try
             {
-                var obj = _context.GetAllTrainers_Result.FromSqlInterpolated<GetAllTrainers_Result>($"EXECUTE SP_GetAllApprovedTrainers ");
-
+                var obj = _context.GetAllApprovedTrainers_Result.FromSqlInterpolated<GetAllApprovedTrainers_Result>($"EXECUTE SP_GetAllApprovedTrainers");
                 var result = from row in obj.AsEnumerable()
-                             group row by (new
+                             select new
                              {
                                  row.TrainerID,
                                  row.Firstname,
                                  row.Lastname,
                                  row.Bio,
                                  row.Experience,
-                                 row.specialty,
-                             }) into Group
-                             let row = Group.First()
-                             select new
-                             {
-                                 TrainerInfo = Group.Key,
+                                 row.Specialty,
+                                 row.Trainer_Profile,
                              };
-                response.Data = result.ToList().Take(50);
+
+                response.Data = result.ToList();
                 response.IsSuccess = true;
                 return response;
             }
@@ -351,22 +369,34 @@ namespace Pt_For_Me
             {
                 var obj = _context.GetAllPendingTrainers_Result.FromSqlInterpolated<GetAllPendingTrainers_Result>($"EXECUTE SP_GetAllPendingTrainers");
 
+                /* var result = from row in obj.AsEnumerable()
+                              group row by (new
+                              {
+                                  row.TrainerID,
+                                  row.Firstname,
+                                  row.Lastname,
+                                  row.Profile,
+                                  row.Certificate,
+                                  row.CV,
+                              }) into Group
+                              let row = Group.First()
+                              select new
+                              {
+                                  TrainerInfo = Group.Key,
+                              };
+                 response.Data = result.ToList().Take(50);*/
                 var result = from row in obj.AsEnumerable()
-                             group row by (new
+                             select new
                              {
                                  row.TrainerID,
                                  row.Firstname,
                                  row.Lastname,
                                  row.Profile,
                                  row.Certificate,
-                                 row.CV,
-                             }) into Group
-                             let row = Group.First()
-                             select new
-                             {
-                                 TrainerInfo = Group.Key,
+                                 row.CV
                              };
-                response.Data = result.ToList().Take(50);
+
+                response.Data = result.ToList();
                 response.IsSuccess = true;
                 return response;
             }
@@ -448,6 +478,77 @@ namespace Pt_For_Me
             }
         }
 
+        public ResponseModel<bool> AcceptTrainer(int TrainerID)
+        {
+            ResponseModel<bool> response = new ResponseModel<bool>();
+
+            try
+            {
+                response.Data = false;
+                response.IsSuccess = true;
+                response.Message = "Unable to accept the trainer, try again later";
+
+                Table_Trainer trainer = _context.Table_Trainer.Where(t => t.ID == TrainerID).FirstOrDefault();  
+                if (trainer != null)
+                {
+                  
+                    
+                        trainer.isAccepted = true;
+                        trainer.Status = true;
+                        _context.SaveChanges();
+
+                        response.Message = "Trainer Accepted Successfully!";
+                        response.Data = true;
+                    
+                }
+                
+                return response;
+
+
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                return response;
+            }
+        }
+
+        public ResponseModel<bool> DeclineTrainer(int TrainerID)
+        {
+            ResponseModel<bool> response = new ResponseModel<bool>();
+
+            try
+            {
+                response.Data = false;
+                response.IsSuccess = true;
+                response.Message = "Unable to decline the trainer, try again later";
+
+                Table_Trainer trainer = _context.Table_Trainer.Where(t => t.ID == TrainerID).FirstOrDefault();
+                if (trainer != null)
+                {
+                    if (trainer != null)
+                    {
+                        trainer.isAccepted = false;
+                        trainer.Status = true;
+                        _context.SaveChanges();
+
+                        response.Message = "Trainer Declined Successfully!";
+                        response.Data = true;
+                    }
+                }
+
+                return response;
+
+
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                return response;
+            }
+        }
         public ResponseModel<bool> AddClientHealthRiskOrInjury(int UserID , string healthRisk , string injury)
         {
             ResponseModel<bool> response = new ResponseModel<bool>();

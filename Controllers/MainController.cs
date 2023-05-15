@@ -34,6 +34,19 @@ namespace Pt_For_Me.Controllers
 
         }
 
+        [Route("GetGeneralPackages")]
+        [HttpGet]
+        public IActionResult GetGeneralPackages()
+        {
+            try
+            {
+                var result = _PtForMeRepository.GetGeneralPackages();
+                return Ok(result);
+            }catch(Exception e )
+            {
+                return Ok(e.Message);
+            }
+        }
         [Route("CreateNewClient")]
         [HttpPost]
         public IActionResult CreateNewClient([FromForm] User user , [FromForm(Name = "ProfilePic")] IFormFile imageProfile)
@@ -124,9 +137,9 @@ namespace Pt_For_Me.Controllers
             imageProfile.CopyTo(streamImageProfile);
 
             //for the api methode
-            var imageProfilePath = "/api/profilesUser/" + newProfileFileName;
-            var imageCVPath = "/api/profilesUser/" + newCvFileName;
-            var imageCertificatePath = "/api/profilesUser/" + newCertificateFileName;
+            var imageProfilePath = "/api/profileTrainer/" + newProfileFileName;
+            var imageCVPath = "/api/cvTrainer/" + newCvFileName;
+            var imageCertificatePath = "/api/certificateTrainer/" + newCertificateFileName;
             //db
             trainer.certificateUrl = imageCertificatePath;
             trainer.cvURL = imageCVPath;
@@ -177,6 +190,21 @@ namespace Pt_For_Me.Controllers
             return Ok(result);
         }
 
+        [Route("AcceptTrainer")]
+        [HttpPut]
+        public IActionResult AcceptTrainer([FromBody] Trainer trainer)
+        {
+            var result = _PtForMeRepository.AcceptTrainer(trainer.id);
+            return Ok(result);
+        }
+
+        [Route("DeclineTrainer")]
+        [HttpPut]
+        public IActionResult DeclineTrainer([FromBody] Trainer trainer)
+        {
+            var result = _PtForMeRepository.DeclineTrainer(trainer.id);
+            return Ok(result);
+        }
         [Route("GetTrainerByTrainerID")]
         [HttpGet]
         public IActionResult GetTrainerByTrainerID([FromBody] Trainer trainer)

@@ -65,6 +65,9 @@ namespace Pt_For_Me
             modelBuilder.Entity<GetAllApprovedTrainers_Result>(entity =>
             {
                 entity.HasKey(entity =>entity.TrainerID);
+
+                entity.Property(e => e.Trainer_Profile)
+                .HasColumnName("ProfileURL");
             });
 
             modelBuilder.Entity<GetAllPendingTrainers_Result>(entity =>

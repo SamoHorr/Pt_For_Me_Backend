@@ -1,4 +1,6 @@
-﻿namespace Pt_For_Me.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Pt_For_Me.Models
 {
     public class GetAllTrainers_Result
     {
@@ -8,5 +10,7 @@
         public string Bio { get; set; }
         public int Experience { get; set; }
         public string specialty { get; set; }
+        [NotMapped]
+        public object ProfileURL { get; internal set; }
     }
 }
