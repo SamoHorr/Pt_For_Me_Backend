@@ -84,9 +84,13 @@ namespace Pt_For_Me.Controllers
 
         [Route("WebsiteLogin")]
         [HttpPost]
-        //[EnableCors(AllowAllOrigins)]
+       // [EnableCors(AllowAllOrigins)]
         public IActionResult LoginWebsite([FromBody] User user)
         {
+            Response.Headers.Add("Access-Control-Allow-Origin", "http://localhost:4000");
+            Response.Headers.Add("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+            Response.Headers.Add("Access-Control-Allow-Headers", "Content-Type");
+
             var result = _PtForMeRepository.LoginWebsite(user.username, user.password);
             return Ok(result);
         }
@@ -230,6 +234,29 @@ namespace Pt_For_Me.Controllers
         }
 
 
+        [Route("GetTrainerCountByExperience")]
+        [HttpGet]
+        public IActionResult GetTrainerCountByExperience()
+        {
+            var result = _PtForMeRepository.GetTrainerCountByExperience();
+            return Ok(result);
+        }
+
+        [Route("GetPackageByTrainerID")]
+        [HttpGet]
+        public IActionResult GetPackageByTrainerID([FromBody] Trainer trainer)
+        {
+            var result = _PtForMeRepository.GetPackageByTrainerID(trainer.id);
+            return Ok(result);
+        }
+
+        [Route("GetPackagesByTrainers")]
+        [HttpGet]
+        public IActionResult GetPackagesByTrainers()
+        {
+            var result = _PtForMeRepository.GetPackagesByTrainers();
+            return Ok(result);
+        }
         //api for images same logic just different folders (allows to call images as api solves issue of images filepath local to one pc)
         [Route("profilesUser/{fileName}")]
         [HttpGet]

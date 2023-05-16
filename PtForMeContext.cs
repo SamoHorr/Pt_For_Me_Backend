@@ -40,6 +40,9 @@ namespace Pt_For_Me
         public virtual DbSet<GetAllApprovedTrainers_Result> GetAllApprovedTrainers_Result { get; set; }
         public virtual DbSet<GetAllPendingTrainers_Result> GetAllPendingTrainers_Result { get; set; }
         public virtual DbSet<GetTrainerVerificationStatus_Result> GetTrainerVerificationStatus_Result { get; set; }
+        public virtual DbSet<GetTrainerCountByExperience_Result> GetTrainerCountByExperience_Result { get; set; }
+        public virtual DbSet<GetPackageByTrainerID_Result> GetPackageByTrainerID_Result { get; set; }
+        public virtual DbSet<GetPackagesByTrainers_Result> GetPackagesByTrainers_Result { get; set; }
         protected override void OnModelCreating (ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Table_User>(entity =>
@@ -76,6 +79,18 @@ namespace Pt_For_Me
             });
 
             modelBuilder.Entity<GetTrainerVerificationStatus_Result>(entity =>
+            {
+                entity.HasKey(entity => entity.ID);
+            });
+            modelBuilder.Entity<GetTrainerCountByExperience_Result>(entity =>
+            {
+                entity.HasNoKey();
+            });
+            modelBuilder.Entity<GetPackageByTrainerID_Result>(entity =>
+            {
+                entity.HasKey(entity => entity.ID);
+            });
+            modelBuilder.Entity<GetPackageByTrainerID_Result>(entity =>
             {
                 entity.HasKey(entity => entity.ID);
             });

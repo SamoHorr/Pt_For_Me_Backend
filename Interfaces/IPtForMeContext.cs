@@ -36,6 +36,12 @@ public interface IPtForMeContext
 
         //for the website admin
         DbSet<GetAllPendingTrainers_Result> GetAllPendingTrainers_Result { get; set; }
+        DbSet<GetTrainerCountByExperience_Result> GetTrainerCountByExperience_Result { get; set;  }
 
-}
+        //will be used in mobile and website
+        DbSet<GetPackageByTrainerID_Result> GetPackageByTrainerID_Result { get; set; }
+        DbSet<GetPackagesByTrainers_Result> GetPackagesByTrainers_Result { get; set; }
+
+
+    }
 }

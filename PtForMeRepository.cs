@@ -329,6 +329,7 @@ namespace Pt_For_Me
 
         }
 
+
         public ResponseModel<object> GetAllApprovedTrainers()
         {
             ResponseModel<object> response = new ResponseModel<object>();
@@ -441,7 +442,7 @@ namespace Pt_For_Me
             }
 
         }
-        
+       
         public  ResponseModel<object> GetTrainerByTrainerID(int TrainerID)
         {
 
@@ -549,6 +550,96 @@ namespace Pt_For_Me
                 return response;
             }
         }
+
+        public ResponseModel<object> GetTrainerCountByExperience()
+        {
+            ResponseModel<object> response = new ResponseModel<object>();
+            response.Message = "Unable to retrieve trainer count";
+            try
+            {
+                var obj = _context.GetTrainerCountByExperience_Result.FromSqlInterpolated<GetTrainerCountByExperience_Result>($"EXECUTE SP_GetAllPendingTrainers");
+
+                var result = from row in obj.AsEnumerable()
+                             select new
+                             {
+
+                               row.ExperienceCategory,
+                               row.TrainerCount,
+                             };
+
+                response.Data = result.ToList();
+                response.IsSuccess = true;
+                response.Message = "Retrieved trainer count successfully!";
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                return response;
+            }
+        }
+
+        public ResponseModel<object> GetPackageByTrainerID(int TrainerID)
+        {
+            ResponseModel<object> response = new ResponseModel<object>();
+            response.Message = "Unable to get the package for this trainer";
+            try
+            {
+                var obj = _context.GetPackageByTrainerID_Result.FromSqlInterpolated<GetPackageByTrainerID_Result>($"EXECUTE SP_GetPackageByTrainerID {TrainerID}");
+                var result = from row in obj.AsEnumerable()
+                             select new
+                             {
+                                 row.ID,
+                                 row.Trainer,
+                                 row.AverageRating,
+                                 row.Pricing,
+                                 row.PackageType,
+                                 row.Bundle
+                             };
+                response.Data = result.ToList();
+                response.IsSuccess = true;
+                response.Message = "Retrieved the package for the trainer";
+                return response;
+                             
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                return response;
+            }
+        }
+        public ResponseModel<object> GetPackagesByTrainers()
+        {
+            ResponseModel<object> response = new ResponseModel<object>();
+            response.Message = "Unable to get the package for this trainer";
+            try
+            {
+                var obj = _context.GetPackagesByTrainers_Result.FromSqlInterpolated<GetPackagesByTrainers_Result>($"EXECUTE SP_GetPackagesByTrainers");
+                var result = from row in obj.AsEnumerable()
+                             select new
+                             {
+                                 row.ID,
+                                 row.Trainer,
+                                 row.AverageRating,
+                                 row.Pricing,
+                                 row.PackageType,
+                                 row.Bundle
+                             };
+                response.Data = result.ToList();
+                response.IsSuccess = true;
+                response.Message = "Retrieved available packages for the trainers";
+                return response;
+
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                return response;
+            }
+        }
         public ResponseModel<bool> AddClientHealthRiskOrInjury(int UserID , string healthRisk , string injury)
         {
             ResponseModel<bool> response = new ResponseModel<bool>();
@@ -567,9 +658,11 @@ namespace Pt_For_Me
                     {
                         UserID = UserID,
                         HealthRisk = healthRisk,
-                        Injury = injury,
+                        Injury = injury,     
 
                     };
+
+                   
                     //saving the new user to the db
                     _context.Table_Health.Add(newHealth);
                     _context.SaveChanges();

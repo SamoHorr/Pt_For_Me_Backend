@@ -23,6 +23,9 @@ namespace Pt_For_Me.Interfaces
         ResponseModel<object> GetGeneralPackages ();
         ResponseModel<bool> AcceptTrainer(int TrainerID);
         ResponseModel<bool> DeclineTrainer(int TrainerID);
+        ResponseModel<object> GetTrainerCountByExperience();
+        ResponseModel<object> GetPackageByTrainerID(int TrainerID);
+        ResponseModel<object> GetPackagesByTrainers();
     }
 
 
