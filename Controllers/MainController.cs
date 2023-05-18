@@ -87,16 +87,16 @@ namespace Pt_For_Me.Controllers
             return Ok(result);
         }
 
-        [Route("WebsiteLogin")]
-        [HttpPost]
-        // [EnableCors(AllowAllOrigins)]
+      [Route("WebsiteLogin")]
+      [HttpPost]
+        [EnableCors("AllowAllOrigins")]
         public IActionResult LoginWebsite([FromBody] User user)
         {
             Response.Headers.Add("Access-Control-Allow-Origin", "http://localhost:4000");
             Response.Headers.Add("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
             Response.Headers.Add("Access-Control-Allow-Headers", "Content-Type");
-
             var result = _PtForMeRepository.LoginWebsite(user.username, user.password);
+            //  var result = _PtForMeRepository.LoginWebsite(user);
             return Ok(result);
         }
         //[Route("CreateNewTrainer")]

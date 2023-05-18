@@ -39,6 +39,16 @@ builder.Services.AddScoped<IPtForMeRepository, PtForMeRepository>();
 builder.Services.AddTransient<IPtForMeRepository, PtForMeRepository>();
 //for agora
 builder.Services.AddHttpClient();
+//for cors policy
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(builder =>
+    {
+        builder.WithOrigins("http://localhost:4000")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
 
 //for the connection string to link db
 builder.Services.AddDbContext<PtForMeContext>(options =>
@@ -69,6 +79,8 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
+//allow cors
+app.UseCors("AllowAll");
 app.UseCors("corspolicy");
 
 app.MapControllers();
