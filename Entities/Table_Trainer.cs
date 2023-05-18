@@ -12,7 +12,12 @@
         public string Bio { get; set; }
         public string Email { get; set; }
         public int Experience { get; set; }
+        //for the tokens 
         public string Device_Token { get; set; }
+        public string ?ChannelName { get; set; }
+        public string ?Token { get; set; }
+
+        //for pending/approved status
         public bool ?Status { get; set; }
         public bool ?isAccepted { get; set; }
 

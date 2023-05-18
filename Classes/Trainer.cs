@@ -16,6 +16,8 @@
         public string  deviceToken { get; set; }
         public string certificateUrl { get; set; }
         public string cvURL { get; set; }
+        public string ?channelName { get; set; }
+        public string ?token { get; set; }
 
     }
 }

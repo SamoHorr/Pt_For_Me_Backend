@@ -2,6 +2,7 @@
 using Pt_For_Me.Interfaces;
 using Pt_For_Me.Classes;
 using Microsoft.AspNetCore.Cors;
+using Pt_For_Me.Entities;
 
 namespace Pt_For_Me.Controllers
 {
@@ -11,12 +12,14 @@ namespace Pt_For_Me.Controllers
     {
         private readonly IPtForMeRepository _PtForMeRepository;
         private readonly PtForMeContext _context;
-        public IWebHostEnvironment _enviroment; 
-        public MainController(IPtForMeRepository PtForMeRepository, PtForMeContext context, IWebHostEnvironment enviroment)
+        public IWebHostEnvironment _enviroment;
+        private readonly IHttpClientFactory _httpClientFactory;
+        public MainController(IPtForMeRepository PtForMeRepository, PtForMeContext context, IWebHostEnvironment enviroment, IHttpClientFactory httpClientFactory)
         {
             _PtForMeRepository = PtForMeRepository;
             _context = context;
             _enviroment = enviroment;
+            _httpClientFactory = httpClientFactory;
         }
 
         [Route("GetUsers")]
@@ -27,7 +30,8 @@ namespace Pt_For_Me.Controllers
             {
                 var result = _PtForMeRepository.GetUsers();
                 return Ok(result);
-            } catch (Exception e)
+            }
+            catch (Exception e)
             {
                 return Ok(e.Message);
             }
@@ -42,14 +46,15 @@ namespace Pt_For_Me.Controllers
             {
                 var result = _PtForMeRepository.GetGeneralPackages();
                 return Ok(result);
-            }catch(Exception e )
+            }
+            catch (Exception e)
             {
                 return Ok(e.Message);
             }
         }
         [Route("CreateNewClient")]
         [HttpPost]
-        public IActionResult CreateNewClient([FromForm] User user , [FromForm(Name = "ProfilePic")] IFormFile imageProfile)
+        public IActionResult CreateNewClient([FromForm] User user, [FromForm(Name = "ProfilePic")] IFormFile imageProfile)
 
         {
             //changing the profile pictures received names and creating the necessary paths
@@ -61,7 +66,7 @@ namespace Pt_For_Me.Controllers
                 Directory.CreateDirectory(rootPath);
             }
             var pathProfile = Path.Combine("", _enviroment.ContentRootPath + "App_Data\\UserProfile\\" + newCertificateFileName);
-           
+
             //to store the images received in the App_data folder inside the project
             var streamImageCertificate = new FileStream(pathProfile, FileMode.Create, FileAccess.Write);
             imageProfile.CopyTo(streamImageCertificate);
@@ -69,8 +74,8 @@ namespace Pt_For_Me.Controllers
             //for the methode
             var imagePath = "/api/profilesUser/" + newCertificateFileName;
             user.profileURL = imagePath;
-           
-            var result = _PtForMeRepository.CreateUser(user.FirstName, user.LastName, user.DOB, user.username, user.password, user.profileURL ,  user.Email, user.DeviceToken);
+
+            var result = _PtForMeRepository.CreateUser(user.FirstName, user.LastName, user.DOB, user.username, user.password, user.profileURL, user.Email, user.DeviceToken);
             return Ok(result);
         }
 
@@ -84,7 +89,7 @@ namespace Pt_For_Me.Controllers
 
         [Route("WebsiteLogin")]
         [HttpPost]
-       // [EnableCors(AllowAllOrigins)]
+        // [EnableCors(AllowAllOrigins)]
         public IActionResult LoginWebsite([FromBody] User user)
         {
             Response.Headers.Add("Access-Control-Allow-Origin", "http://localhost:4000");
@@ -104,10 +109,10 @@ namespace Pt_For_Me.Controllers
         // var resu; 
         //return Ok(result);
         //}
-        [Route ("CreateNewTrainer")]
+        [Route("CreateNewTrainer")]
         [ApiExplorerSettings(IgnoreApi = true)]
         [HttpPost]
-        public IActionResult CreateNewTrainer([FromForm] Trainer trainer , [FromForm(Name = "Certificate")] IFormFile imageCertificate, [FromForm(Name = "CV")] IFormFile imageCV , [FromForm(Name = "ProfilePic")] IFormFile imageProfile)
+        public IActionResult CreateNewTrainer([FromForm] Trainer trainer, [FromForm(Name = "Certificate")] IFormFile imageCertificate, [FromForm(Name = "CV")] IFormFile imageCV, [FromForm(Name = "ProfilePic")] IFormFile imageProfile)
         {
 
             if (trainer == null)
@@ -150,7 +155,7 @@ namespace Pt_For_Me.Controllers
             trainer.profileURL = imageProfilePath;
             //(string firstname, string lastname, string username  , string password , string email, string bio, int experience, int specialty, string DeviceToken , string imageCertificateURL , string  imageCvURL)
             //using the function in repo to create user
-            var result = _PtForMeRepository.CreateTrainer(trainer.firstname, trainer.lastname, trainer.username, trainer.password, trainer.email, trainer.profileURL ,  trainer.bio, trainer.experience, trainer.specialty, trainer.deviceToken, trainer.certificateUrl, trainer.cvURL);
+            var result = _PtForMeRepository.CreateTrainer(trainer.firstname, trainer.lastname, trainer.username, trainer.password, trainer.email, trainer.profileURL, trainer.bio, trainer.experience, trainer.specialty, trainer.deviceToken, trainer.certificateUrl, trainer.cvURL);
             return Ok(result);
         }
 
@@ -170,7 +175,7 @@ namespace Pt_For_Me.Controllers
             return Ok(result);
         }
 
-        [Route ("GetAllApprovedTrainers")]
+        [Route("GetAllApprovedTrainers")]
         [HttpGet]
         public IActionResult GetAllApprovedTrainers()
         {
@@ -188,7 +193,7 @@ namespace Pt_For_Me.Controllers
 
         [Route("GetTrainerVerificationStatus")]
         [HttpGet]
-        public IActionResult GetTrainerVerificationStatus([FromBody] Trainer trainer )
+        public IActionResult GetTrainerVerificationStatus([FromBody] Trainer trainer)
         {
             var result = _PtForMeRepository.GetTrainerVerificationStatus(trainer.id);
             return Ok(result);
@@ -199,6 +204,7 @@ namespace Pt_For_Me.Controllers
         public IActionResult AcceptTrainer([FromBody] Trainer trainer)
         {
             var result = _PtForMeRepository.AcceptTrainer(trainer.id);
+
             return Ok(result);
         }
 
@@ -229,7 +235,7 @@ namespace Pt_For_Me.Controllers
         [HttpPost]
         public IActionResult AddClientGoal([FromBody] Goal goal)
         {
-            var result = _PtForMeRepository.AddClientGoal(goal.userID , goal.description , goal.targetWeight , goal.date);
+            var result = _PtForMeRepository.AddClientGoal(goal.userID, goal.description, goal.targetWeight, goal.date);
             return Ok(result);
         }
 
@@ -257,6 +263,23 @@ namespace Pt_For_Me.Controllers
             var result = _PtForMeRepository.GetPackagesByTrainers();
             return Ok(result);
         }
+
+        [Route("GetUserCountByGoals")]
+        [HttpGet]
+        public IActionResult GetUserCountByGoal()
+        {
+            var result = _PtForMeRepository.GetUserCountByGoal();
+            return Ok(result);
+        }
+
+        [Route("GetUserCountByAge")]
+        [HttpGet]
+        public IActionResult GetUserCountByAge()
+        {
+            var result = _PtForMeRepository.GetUserCountByAge();
+            return Ok(result);
+        }
+
         //api for images same logic just different folders (allows to call images as api solves issue of images filepath local to one pc)
         [Route("profilesUser/{fileName}")]
         [HttpGet]
@@ -310,5 +333,45 @@ namespace Pt_For_Me.Controllers
             var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
             return File(fileStream, "image/jpeg");
         }
+
+        //this api will allow us to generate tokens for trainer for agora that we are using for the videocalling (to be able to have a token for each trainer )
+
+        [HttpPost("GenerateTokenForTrainer/{uDID}/{channelName}")]
+        public async Task<IActionResult> GenerateToken( string uDID, string channelName)
+        {
+            var agoraAppID = "f8daf4a31b5b4391a0cc806900340709";
+            var agoraAppCertificate = "42f8f017f8b34198ac18900d1d935a1e";
+
+            var agoraTokenEndpoint = $"https://api.agora.io/v1/project/f8daf4a31b5b4391a0cc806900340709/rtc/token";
+
+            //var agoraTokenEndpoint = $"http://192.168.1.107:7274/APIS/Main/GenerateTokenForTrainer/56468468/Samuel%20Smith's%20Channel";
+            var httpClient = _httpClientFactory.CreateClient();
+
+            var request = new
+            {
+                appId = agoraAppID,
+                appCertificate = agoraAppCertificate,
+                uid = uDID,
+                channelName,
+                expirationTimeInSeconds = 0 // Token does not expire
+            };
+
+            var response = await httpClient.PostAsJsonAsync(agoraTokenEndpoint, request);
+            var token = await response.Content.ReadAsStringAsync();
+
+            // Save the necessary information to the database
+            
+            Table_Trainer trainer = _context.Table_Trainer.Where(t => t.Device_Token == uDID).FirstOrDefault();
+            if (trainer != null)
+            {
+                trainer.ChannelName = channelName;
+                trainer.Token = token;
+                _context.SaveChanges();
+
+            }
+
+            return Ok(new { token });
+        }
     }
 }
+

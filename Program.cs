@@ -37,6 +37,9 @@ builder.Services.AddCors(p => p.AddPolicy("corspolicy", build =>
 //refrences for interface & repository
 builder.Services.AddScoped<IPtForMeRepository, PtForMeRepository>();
 builder.Services.AddTransient<IPtForMeRepository, PtForMeRepository>();
+//for agora
+builder.Services.AddHttpClient();
+
 //for the connection string to link db
 builder.Services.AddDbContext<PtForMeContext>(options =>
 {

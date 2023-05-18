@@ -494,7 +494,7 @@ namespace Pt_For_Me
                 {
                   
                     
-                        trainer.isAccepted = true;
+                        trainer.isAccepted = true; 
                         trainer.Status = true;
                         _context.SaveChanges();
 
@@ -714,6 +714,62 @@ namespace Pt_For_Me
                 return response;
 
 
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                return response;
+            }
+        }
+        public ResponseModel<object> GetUserCountByAge()
+        {
+            ResponseModel<object> response = new ResponseModel<object>();
+            response.Message = "Unable to retrieve user count";
+                try
+                {
+                    var obj = _context.GetUserCountByAge_Result.FromSqlInterpolated<GetUserCountByAge_Result>($"EXECUTE SP_GetUserCountByAge");
+
+                         var result = from row in obj.AsEnumerable()
+                         select new
+                         {
+
+                             row.YearOfBirth,
+                             row.UserCount,
+                         };
+
+                    response.Data = result.ToList();
+                    response.IsSuccess = true;
+                    response.Message = "Retrieved user count successfully!";
+                    return response;
+                }
+                catch (Exception ex)
+                {
+                    response.IsSuccess = false;
+                    response.Message = ex.Message;
+                    return response;
+                }
+        }
+
+        public ResponseModel<object> GetUserCountByGoal()
+        {
+            ResponseModel<object> response = new ResponseModel<object>();
+            response.Message = "Unable to retrieve user count";
+            try
+            {
+                var obj = _context.GetUserCountByGoals_Result.FromSqlInterpolated<GetUserCountByGoals_Result>($"EXECUTE SP_GetUserCountByGoals");
+
+                var result = from row in obj.AsEnumerable()
+                             select new
+                             {
+                                 row.Goal,
+                                 row.UserCount,
+                             };
+
+                response.Data = result.ToList();
+                response.IsSuccess = true;
+                response.Message = "Retrieved user count successfully!";
+                return response;
             }
             catch (Exception ex)
             {

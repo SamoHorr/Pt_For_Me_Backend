@@ -5,7 +5,7 @@ namespace Pt_For_Me.Entities
     {
        public int ID { get; set; }
         public int TrainerID { get; set; }
-        public DateTime Day_BlockedStart { get; set; }
-        public DateTime Day_BlockedEnd { get; set; }
+        public DateTime? Day_BlockedStart { get; set; }
+        public DateTime? Day_BlockedEnd { get; set; }
     }
 }

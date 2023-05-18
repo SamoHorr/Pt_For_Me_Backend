@@ -26,6 +26,8 @@ namespace Pt_For_Me.Interfaces
         ResponseModel<object> GetTrainerCountByExperience();
         ResponseModel<object> GetPackageByTrainerID(int TrainerID);
         ResponseModel<object> GetPackagesByTrainers();
+        ResponseModel<object> GetUserCountByAge();
+        ResponseModel<object> GetUserCountByGoal();
     }
 
 
