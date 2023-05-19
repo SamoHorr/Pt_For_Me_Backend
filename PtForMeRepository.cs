@@ -778,6 +778,129 @@ namespace Pt_For_Me
                 return response;
             }
         }
+        public ResponseModel<object> GetPendingReviews()
+        {
+            ResponseModel<object> response = new ResponseModel<object>();
+            response.Message = "Unable to retrieve the reviews";
+            try
+            {
+                var obj = _context.GetPendingReviews_Result.FromSqlInterpolated<GetPendingReviews_Result>($"EXECUTE SP_GetPendingReviews");
+                var result = from row in obj.AsEnumerable()
+                             select new
+                             {
+                                 row.SessionID,
+                                 row.Client_Name,
+                                 row.Review,
+                             };
+                response.Data = result.ToList();
+                response.IsSuccess = true;
+                response.Message = "Retrieved reviews successfully!";
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                return response;
+            }
+        }
+        public ResponseModel<bool> AcceptReview(int SessionID)
+        {
+            ResponseModel<bool> response = new ResponseModel<bool>();
+
+            try
+            {
+                response.Data = false;
+                response.IsSuccess = true;
+                response.Message = "Unable to accept the review, try again later";
+
+                Table_Session session = _context.Table_Session.Where(r => r.ID == SessionID).FirstOrDefault();
+                if (session != null)
+                {
+
+
+                    session.isAccepted = true;
+                    _context.SaveChanges();
+
+                    response.Message = "Review Accepted Successfully!";
+                    response.Data = true;
+
+                }
+
+                return response;
+
+
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                return response;
+            }
+        }
+
+        public ResponseModel<bool> DeclineReview (int SessionID)
+        {
+            ResponseModel<bool> response = new ResponseModel<bool>();
+
+            try
+            {
+                response.Data = false;
+                response.IsSuccess = true;
+                response.Message = "Unable to accept the trainer, try again later";
+
+                Table_Session session = _context.Table_Session.Where(r => r.ID == SessionID).FirstOrDefault();
+                if (session != null)
+                {
+
+
+                    session.isAccepted = false;
+                    _context.SaveChanges();
+
+                    response.Message = "Review Declined Successfully!";
+                    response.Data = true;
+
+                }
+
+                return response;
+
+
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                return response;
+            }
+        }
+
+        public ResponseModel<object> GetAcceptedReviewByTrainerID(int TrainerID)
+        {
+            ResponseModel<object> response = new ResponseModel<object>();
+            response.Message = "Unable to get the package for this trainer";
+            try
+            {
+                var obj = _context.GetAcceptedReviewByTrainerID_Result.FromSqlInterpolated<GetAcceptedReviewByTrainerID_Result>($"EXECUTE SP_GetAcceptedReviewByTrainerID {TrainerID}");
+                var result = from row in obj.AsEnumerable()
+                             select new
+                             {
+                                 row.Client_Name,
+                                 row.Review,
+                                 row.Trainer_Name
+                             };
+                response.Data = result.ToList();
+                response.IsSuccess = true;
+                response.Message = "Retrieved the reviews for the trainer";
+                return response;
+
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                return response;
+            }
+        }
         public ResponseModel<string> GetDeviceIDFromTrainerID(int TrainerID)
         {
             ResponseModel<string> response = new ResponseModel<String>();

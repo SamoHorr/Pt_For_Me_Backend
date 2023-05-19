@@ -221,6 +221,39 @@ namespace Pt_For_Me.Controllers
             var result = _PtForMeRepository.DeclineTrainer(trainer.id);
             return Ok(result);
         }
+
+        [Route("GetPendingReviews")]
+        [HttpGet]
+        public IActionResult GetPendingReviews()
+        {
+            var result = _PtForMeRepository.GetPendingReviews();
+            return Ok(result);
+        }
+
+        [Route("AcceptReview")]
+        [HttpPut]
+        public IActionResult AcceptReview([FromBody] Session session)
+        {
+            var result = _PtForMeRepository.AcceptReview(session.SessionID);
+            return Ok(result);
+        }
+
+        [Route("DeclineReview")]
+        [HttpPut]
+        public IActionResult DeclineReview([FromBody] Session session)
+        {
+            var result = _PtForMeRepository.DeclineReview(session.SessionID);
+            return Ok(result);
+        }
+
+        [Route("GetAcceptedReviewByTrainerID")]
+        [HttpGet]
+        public IActionResult GetAcceptedReviewByTrainerID([FromBody] Session session)
+        {
+            var result = _PtForMeRepository.GetAcceptedReviewByTrainerID(session.TrainerID);
+            return Ok(result);
+        }
+
         [Route("GetTrainerByTrainerID")]
         [HttpGet]
         public IActionResult GetTrainerByTrainerID([FromBody] Trainer trainer)

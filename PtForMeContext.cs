@@ -45,6 +45,8 @@ namespace Pt_For_Me
         public virtual DbSet<GetPackagesByTrainers_Result> GetPackagesByTrainers_Result { get; set; }
         public virtual DbSet<GetUserCountByAge_Result> GetUserCountByAge_Result { get; set; }
         public virtual DbSet<GetUserCountByGoals_Result> GetUserCountByGoals_Result { get; set; }
+        public virtual DbSet<GetPendingReviews_Result> GetPendingReviews_Result { get; set; }
+        public virtual DbSet<GetAcceptedReviewByTrainerID_Result> GetAcceptedReviewByTrainerID_Result { get; set; }
         protected override void OnModelCreating (ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Table_User>(entity =>
@@ -104,7 +106,14 @@ namespace Pt_For_Me
             {
                 entity.HasNoKey();
             });
-
+            modelBuilder.Entity<GetPendingReviews_Result>(entity =>
+            {
+                entity.HasNoKey();
+            });
+            modelBuilder.Entity<GetAcceptedReviewByTrainerID_Result>(entity =>
+            {
+                entity.HasNoKey();
+            });
         }
     }
 }

@@ -30,6 +30,10 @@ namespace Pt_For_Me.Interfaces
         ResponseModel<object> GetUserCountByGoal();
         ResponseModel<string> GetDeviceIDFromTrainerID(int TrainerID);
         ResponseModel<string> GetChannelNameIDFromTrainerID(int TrainerID);
+        ResponseModel<object> GetPendingReviews();
+        ResponseModel<bool> DeclineReview(int SessionID);
+        ResponseModel<bool> AcceptReview(int SessionID);
+        ResponseModel<object> GetAcceptedReviewByTrainerID(int TrainerID);
     }
 
 

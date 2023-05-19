@@ -33,15 +33,18 @@ public interface IPtForMeContext
 
         //for the trainer display
         DbSet<GetTrainerVerificationStatus_Result> GetTrainerVerificationStatus_Result { get; set;}
+        DbSet<GetAcceptedReviewByTrainerID_Result> GetAcceptedReviewByTrainerID_Result { get; set; }
 
         //for the website admin
         DbSet<GetAllPendingTrainers_Result> GetAllPendingTrainers_Result { get; set; }
         DbSet<GetTrainerCountByExperience_Result> GetTrainerCountByExperience_Result { get; set;  }
         DbSet<GetUserCountByAge_Result> GetUserCountByAge_Result { get; set; }
         DbSet<GetUserCountByGoals_Result> GetUserCountByGoals_Result { get; set; }
+        DbSet<GetPendingReviews_Result> GetPendingReviews_Result { get; set; }
         //will be used in mobile and website
         DbSet<GetPackageByTrainerID_Result> GetPackageByTrainerID_Result { get; set; }
         DbSet<GetPackagesByTrainers_Result> GetPackagesByTrainers_Result { get; set; }
+        
 
 
     }
