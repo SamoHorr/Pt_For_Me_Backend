@@ -6,7 +6,7 @@ namespace Pt_For_Me.Interfaces
     public interface IPtForMeRepository
     {
         ResponseModel<object> GetUsers();
-        ResponseModel<bool> CreateUser(string firstname, string lastname, string DOB, string username, string password, string profileURL , string email, string DeviceToken);
+        ResponseModel<bool> CreateUser(string firstname, string lastname, DateTime DOB, string username, string password, string profileURL , string email, string DeviceToken);
         ResponseModel<bool> CreateTrainer(string firstname, string lastname, string username , string password , string email, string profileURL ,  string bio, int experience , int specialty , string DeviceToken, string imageCertificateURL, string imageCvURL);
         ResponseModel<bool> LoginUser(string username, string password);
         ResponseModel<bool> LoginTrainer(string username, string password);
@@ -28,6 +28,8 @@ namespace Pt_For_Me.Interfaces
         ResponseModel<object> GetPackagesByTrainers();
         ResponseModel<object> GetUserCountByAge();
         ResponseModel<object> GetUserCountByGoal();
+        ResponseModel<string> GetDeviceIDFromTrainerID(int TrainerID);
+        ResponseModel<string> GetChannelNameIDFromTrainerID(int TrainerID);
     }
 
 

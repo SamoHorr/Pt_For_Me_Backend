@@ -83,6 +83,13 @@ app.UseAuthorization();
 app.UseCors("AllowAll");
 app.UseCors("corspolicy");
 
+//endpoints for agora
+app.UseRouting();
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllers(); // maps the  API controllers
+});
+
 app.MapControllers();
 
 app.Run();

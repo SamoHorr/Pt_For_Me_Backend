@@ -45,7 +45,7 @@ namespace Pt_For_Me
                 return response;
             }
         }
-        public ResponseModel<bool> CreateUser(string firstname, string lastname, string DOB, string username, string password, string profileURL ,string email, string DeviceToken)
+        public ResponseModel<bool> CreateUser(string firstname, string lastname, DateTime DOB, string username, string password, string profileURL ,string email, string DeviceToken)
         {
             ResponseModel<bool> response = new ResponseModel<bool>();
 
@@ -770,6 +770,42 @@ namespace Pt_For_Me
                 response.IsSuccess = true;
                 response.Message = "Retrieved user count successfully!";
                 return response;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                return response;
+            }
+        }
+        public ResponseModel<string> GetDeviceIDFromTrainerID(int TrainerID)
+        {
+            ResponseModel<string> response = new ResponseModel<String>();
+            try
+            {
+
+                response.Data = _context.Table_Trainer.Where(t => t.ID == TrainerID).FirstOrDefault().Device_Token;
+                response.IsSuccess = true;
+                return response;
+
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                return response;
+            }
+        }
+
+        public ResponseModel<string> GetChannelNameIDFromTrainerID(int TrainerID)
+        {
+            ResponseModel<string> response = new ResponseModel<string>();
+            try
+            {
+                response.Data = _context.Table_Trainer.Where(t => t.ID == TrainerID).FirstOrDefault().FirstName + " channel";
+                response.IsSuccess = true;
+                return response;
+
             }
             catch (Exception ex)
             {

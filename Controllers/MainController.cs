@@ -3,6 +3,10 @@ using Pt_For_Me.Interfaces;
 using Pt_For_Me.Classes;
 using Microsoft.AspNetCore.Cors;
 using Pt_For_Me.Entities;
+using System.Net.Http;
+using System.Threading.Tasks;
+using System.Net.Http.Headers;
+using System.Text;
 
 namespace Pt_For_Me.Controllers
 {
@@ -201,12 +205,14 @@ namespace Pt_For_Me.Controllers
 
         [Route("AcceptTrainer")]
         [HttpPut]
-        public IActionResult AcceptTrainer([FromBody] Trainer trainer)
+        public async Task<IActionResult> AcceptTrainer([FromBody] Trainer trainer)
         {
             var result = _PtForMeRepository.AcceptTrainer(trainer.id);
 
+
             return Ok(result);
         }
+
 
         [Route("DeclineTrainer")]
         [HttpPut]
@@ -336,42 +342,40 @@ namespace Pt_For_Me.Controllers
 
         //this api will allow us to generate tokens for trainer for agora that we are using for the videocalling (to be able to have a token for each trainer )
 
-        [HttpPost("GenerateTokenForTrainer/{uDID}/{channelName}")]
-        public async Task<IActionResult> GenerateToken( string uDID, string channelName)
+        [HttpPost("GenerateAgoraToken")]
+        public async Task<IActionResult> GenerateAgoraToken([FromBody] Trainer trainer)
         {
-            var agoraAppID = "f8daf4a31b5b4391a0cc806900340709";
-            var agoraAppCertificate = "42f8f017f8b34198ac18900d1d935a1e";
+        
+            var agoraTokenEndpoint = "https://api.agora.io/dev/v1/projects/c3926878911c4246a0c0c9edf62a4bd0/rtctoken";
+            var apiKey = "c3926878911c4246a0c0c9edf62a4bd0";
+            var apiSecret = "3f1b453503aa4e42bdc61301bbb65259";
+            var appId = "773e2d4f5d4f4129860676ead8ca1206";
+            var appCertificate = "c959892711f74569adfe2ba7856191a8";
+            var httpClient = new HttpClient();
 
-            var agoraTokenEndpoint = $"https://api.agora.io/v1/project/f8daf4a31b5b4391a0cc806900340709/rtc/token";
-
-            //var agoraTokenEndpoint = $"http://192.168.1.107:7274/APIS/Main/GenerateTokenForTrainer/56468468/Samuel%20Smith's%20Channel";
-            var httpClient = _httpClientFactory.CreateClient();
+            //needed parameters from repo function
+            string uid = _PtForMeRepository.GetDeviceIDFromTrainerID(trainer.id).Data;
+            string channelName = _PtForMeRepository.GetChannelNameIDFromTrainerID(trainer.id).Data;
+           
+            //the agoraTokenEndpoint provided by agora needs credentiels
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(Encoding.ASCII.GetBytes($"{apiKey}:{apiSecret}")));
 
             var request = new
             {
-                appId = agoraAppID,
-                appCertificate = agoraAppCertificate,
-                uid = uDID,
-                channelName,
-                expirationTimeInSeconds = 0 // Token does not expire
+                app_id = appId,
+                app_certificate = appCertificate,
+                channel_name = channelName,
+                user_account = uid,
+                role = "publisher",
+                privilege_expired_ts = (long)(DateTime.UtcNow.AddYears(2) - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds
             };
 
             var response = await httpClient.PostAsJsonAsync(agoraTokenEndpoint, request);
             var token = await response.Content.ReadAsStringAsync();
 
-            // Save the necessary information to the database
-            
-            Table_Trainer trainer = _context.Table_Trainer.Where(t => t.Device_Token == uDID).FirstOrDefault();
-            if (trainer != null)
-            {
-                trainer.ChannelName = channelName;
-                trainer.Token = token;
-                _context.SaveChanges();
-
-            }
-
-            return Ok(new { token });
+            return Ok(token);
         }
     }
+
 }
 
