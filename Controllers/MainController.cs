@@ -383,7 +383,7 @@ namespace Pt_For_Me.Controllers
         public IActionResult AddUserPackageByUserID(UserPackage userPackage)
         {
             //int UserID , int PackageID , int TrainerID ,  DateTime startime , DateTime endtime , int Bundle
-            var result = _PtForMeRepository.AddUserPacakgesByUserID(userPackage.UserID, userPackage.PackageID, userPackage.TrainerID, userPackage.starttime, userPackage.endtime, userPackage.Bundle);
+            var result = _PtForMeRepository.AddUserPacakgesByUserID(userPackage.UserID, userPackage.PackageID, userPackage.TrainerID, userPackage.Bundle);
             return Ok(result);
         }
         //this api will allow us to generate tokens for trainer for agora that we are using for the videocalling (to be able to have a token for each trainer )

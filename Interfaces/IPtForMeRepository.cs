@@ -35,8 +35,11 @@ namespace Pt_For_Me.Interfaces
         ResponseModel<bool> AcceptReview(int SessionID);
         ResponseModel<object> GetAcceptedReviewByTrainerID(int TrainerID);
         ResponseModel<int> GetCallerIDByUserID(int UserID);
-        ResponseModel<bool> AddUserPacakgesByUserID(int UserID, int PackageID, int TrainerID, DateTime startime, DateTime endtime, int Bundle);
-        
+      
+        ResponseModel<bool> AddUserPacakgesByUserID(int UserID, int PackageID, int TrainerID, int Bundle);
+        //ResponseModel<bool> AddBookedSessionByUserID(int UserID);
+        ResponseModel<bool> AddBookedSessionByUserID(int UserID, DateTime startTime, DateTime endTime);
+       // ResponseModel<object> GetSessionInfoByTrainerID (int TrainerID);
     }
 
 

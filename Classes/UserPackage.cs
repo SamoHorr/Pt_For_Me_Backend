@@ -7,8 +7,6 @@
         public int TrainerID { get; set; }
         public int PackageID { get; set; }
         public int Bundle { get; set; }
-        public DateTime starttime { get; set; }
-        public DateTime endtime { get ; set; }  
     }
     }
-}
+

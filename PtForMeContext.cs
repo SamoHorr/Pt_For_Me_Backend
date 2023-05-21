@@ -33,7 +33,7 @@ namespace Pt_For_Me
         public virtual DbSet<Table_Session> Table_Session { get; set; }
         public virtual DbSet<Table_Package> Table_Package { get; set; }
 
-
+        public virtual DbSet<Table_BookedSession> Table_BookedSession { get; set; }
         //models 
         public virtual DbSet<GetAllTrainers_Result> GetAllTrainers_Result { get; set; }
         public virtual DbSet<GetTrainerByTrainerID_Result> GetTrainersByTrainerID_Result { get; set; }
@@ -53,12 +53,47 @@ namespace Pt_For_Me
             {
                 entity.HasKey(e => e.ID);
             });
-
             modelBuilder.Entity<Table_Trainer>(entity =>
             {
                 entity.HasKey(entity => entity.ID);
             });
+            modelBuilder.Entity<Table_Session>(entity =>
+            {
+                entity.HasKey(entity => entity.ID);
+            });
+            modelBuilder.Entity<Table_BookedSession>(entity =>
+            {
+                entity.HasKey(entity => entity.ID);
+            });
+            modelBuilder.Entity<Table_Health>(entity =>
+            {
+                entity.HasKey(entity => entity.ID);
+            });
+            modelBuilder.Entity<Table_Goal>(entity =>
+            {
+                entity.HasKey(entity => entity.ID);
+            });
+            modelBuilder.Entity<Table_Progress> (entity =>
+            {
+                entity.HasKey(entity => entity.ID);
 
+            });
+            modelBuilder.Entity<Table_TrainerBlockedDay>(entity =>
+            {
+                entity.HasKey(entity => entity.ID);
+
+            });
+            modelBuilder.Entity < Table_BookedSession>(entity =>
+            {
+                entity.HasKey(entity => entity.ID);
+
+            });
+            modelBuilder.Entity < Table_Specialty>(entity =>
+            {
+                entity.HasKey(entity => entity.ID);
+
+            });
+            //sp
             modelBuilder.Entity<GetAllTrainers_Result>(entity =>
             {
                 entity.HasKey(entity => entity.TrainerID);

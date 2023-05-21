@@ -672,7 +672,7 @@ namespace Pt_For_Me
                 return response;
             }
         }
-        public ResponseModel<bool> AddUserPacakgesByUserID(int UserID , int PackageID , int TrainerID ,  DateTime startime , DateTime endtime , int Bundle )
+        public ResponseModel<bool> AddUserPacakgesByUserID(int UserID , int PackageID , int TrainerID , int Bundle )
         {
             ResponseModel<bool> response = new ResponseModel<bool>();
 
@@ -700,16 +700,14 @@ namespace Pt_For_Me
                     {
                       UserID = UserID,
                       PackageID = PackageID,
-                      Start_Time = startime, 
-                      End_Time  =  endtime ,
                       Bundle = Bundle , 
-                      RoomID = randomNumber.ToString(),
+                      RoomID = randomNumber,
                     };
                     //saving the new user to the db
                     _context.Table_UserPackage.Add(newPackage);
                     _context.SaveChanges();
 
-                    response.Message = "User Created Successfully";
+                    response.Message = "User Package Created Successfully";
                     response.Data = true;
                 }else if (package != null)
                 {
@@ -724,6 +722,54 @@ namespace Pt_For_Me
                 return response;
             }
         }
+        public ResponseModel<bool> AddBookedSessionByUserID(int UserID ,DateTime startTime , DateTime endTime)
+        {
+            ResponseModel<bool> response = new ResponseModel<bool>();
+            try
+            {
+                response.Data = false;
+                response.IsSuccess = true;
+                response.Message = "Cannot book a session currently";
+
+                //to check that the user has any/or some hours left
+                var bundle = _context.Table_UserPackage.Where(p => p.UserID == UserID).FirstOrDefault().Bundle;
+                //params from UserPackage
+                var trainerID = _context.Table_UserPackage.Where(p => p.UserID == UserID).FirstOrDefault().TrainerID;
+                var userPackageID = _context.Table_UserPackage.Where(p => p.UserID == UserID).FirstOrDefault().ID;
+                var roomID = _context.Table_UserPackage.Where(p => p.UserID == UserID).FirstOrDefault().RoomID;
+
+                if (bundle != null && bundle != 0)
+                {
+                    Table_BookedSession bookedSession = new Table_BookedSession();
+                    {
+                        bookedSession.UserPackageID = userPackageID;
+                        bookedSession.UserID = UserID;
+                        bookedSession.TrainerID = trainerID;
+                        bookedSession.RoomID = roomID;
+                        bookedSession.Start_Time = startTime;
+                        bookedSession.End_Time = endTime;
+                    }
+                    _context.Table_BookedSession.Add(bookedSession);
+                    _context.SaveChanges();
+                    response.Message = "User Session Booked Successfully";
+                    response.Data = true;
+                    
+                }
+                return response;
+
+            }
+            catch(Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                return response;
+            }
+        }
+ /*       public ResponseModel<object> GetSessionInfoByTrainerID (int TrainerID)
+        {
+           
+
+        }*/
         public ResponseModel<bool> AddClientHealthRiskOrInjury(int UserID , string healthRisk , string injury)
         {
             ResponseModel<bool> response = new ResponseModel<bool>();
