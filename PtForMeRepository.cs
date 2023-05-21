@@ -45,6 +45,31 @@ namespace Pt_For_Me
                 return response;
             }
         }
+        public ResponseModel<int> GetCallerIDByUserID(int UserID)
+        {
+            ResponseModel<int> response = new ResponseModel<int>();
+            try
+            {
+                var user = _context.Table_User.FirstOrDefault(u => u.ID == UserID);
+                if (user != null)
+                {
+                    response.Data = user.CallerID;
+                    response.Message = "User CallerID found";
+                    response.IsSuccess = true;
+                }
+                else
+                {
+                    response.IsSuccess = false;
+                    response.Message = "User not found";
+                }
+                return response;
+            }
+            catch
+            {
+                response.IsSuccess = false;
+                return response;
+            }
+        }
         public ResponseModel<bool> CreateUser(string firstname, string lastname, DateTime DOB, string username, string password, string profileURL ,string email, string DeviceToken)
         {
             ResponseModel<bool> response = new ResponseModel<bool>();
@@ -63,6 +88,12 @@ namespace Pt_For_Me
                     return response;
                 }
 
+                //variable randomly generated for caller id
+                Random random = new Random();
+                int min = 100000; // Minimum 6-digit number
+                int max = 999999; // Maximum 6-digit number
+                int randomNumber = random.Next(min, max + 1);
+
                 //if null adding the info to the appropriate fields
                 if (user == null)
                 {
@@ -77,6 +108,7 @@ namespace Pt_For_Me
                         LastName = lastname,
                         ProfileURL = profileURL,
                         DOB = DOB,
+                        CallerID = randomNumber,
                     };
                     //saving the new user to the db
                     _context.Table_User.Add(newUser);
@@ -557,7 +589,7 @@ namespace Pt_For_Me
             response.Message = "Unable to retrieve trainer count";
             try
             {
-                var obj = _context.GetTrainerCountByExperience_Result.FromSqlInterpolated<GetTrainerCountByExperience_Result>($"EXECUTE SP_GetAllPendingTrainers");
+                var obj = _context.GetTrainerCountByExperience_Result.FromSqlInterpolated<GetTrainerCountByExperience_Result>($"EXECUTE SP_GetTrainerCountByExperience");
 
                 var result = from row in obj.AsEnumerable()
                              select new
@@ -632,6 +664,58 @@ namespace Pt_For_Me
                 response.Message = "Retrieved available packages for the trainers";
                 return response;
 
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                return response;
+            }
+        }
+        public ResponseModel<bool> AddUserPacakgesByUserID(int UserID , int PackageID , int TrainerID ,  DateTime startime , DateTime endtime , int Bundle )
+        {
+            ResponseModel<bool> response = new ResponseModel<bool>();
+
+            try
+            {
+                response.Data = false;
+                response.IsSuccess = true;
+                response.Message = "ERROR OCCURED - INVALID INFORMATION ";
+
+                //Table_UserPackage package = _context.Table_UserPackage.Where(p => p.UserID == UserID && p.TrainerID = TrainerID).FirstOrDefault();
+                Table_UserPackage package = _context.Table_UserPackage.FirstOrDefault(p => p.UserID == UserID && p.TrainerID == TrainerID);
+
+
+                //variable randomly generated for room id
+                Random random = new Random();
+                int min = 100000; // Minimum 6-digit number
+                int max = 999999; // Maximum 6-digit number
+                int randomNumber = random.Next(min, max + 1);
+
+                //if null adding the info to the appropriate fields
+                if (package == null)
+                {
+                    Table_UserPackage newPackage = new Table_UserPackage
+
+                    {
+                      UserID = UserID,
+                      PackageID = PackageID,
+                      Start_Time = startime, 
+                      End_Time  =  endtime ,
+                      Bundle = Bundle , 
+                      RoomID = randomNumber.ToString(),
+                    };
+                    //saving the new user to the db
+                    _context.Table_UserPackage.Add(newPackage);
+                    _context.SaveChanges();
+
+                    response.Message = "User Created Successfully";
+                    response.Data = true;
+                }else if (package != null)
+                {
+                    response.Message = "You already have a bought package with the trainer"; 
+                }
+                return response;
             }
             catch (Exception ex)
             {

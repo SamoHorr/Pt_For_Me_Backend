@@ -76,7 +76,7 @@ namespace Pt_For_Me.Controllers
             imageProfile.CopyTo(streamImageCertificate);
 
             //for the methode
-            var imagePath = "/api/profilesUser/" + newCertificateFileName;
+            var imagePath = "/profilesUser/" + newCertificateFileName;
             user.profileURL = imagePath;
 
             var result = _PtForMeRepository.CreateUser(user.FirstName, user.LastName, user.DOB, user.username, user.password, user.profileURL, user.Email, user.DeviceToken);
@@ -150,9 +150,9 @@ namespace Pt_For_Me.Controllers
             imageProfile.CopyTo(streamImageProfile);
 
             //for the api methode
-            var imageProfilePath = "/api/profileTrainer/" + newProfileFileName;
-            var imageCVPath = "/api/cvTrainer/" + newCvFileName;
-            var imageCertificatePath = "/api/certificateTrainer/" + newCertificateFileName;
+            var imageProfilePath = "/profileTrainer/" + newProfileFileName;
+            var imageCVPath = "/cvTrainer/" + newCvFileName;
+            var imageCertificatePath = "/certificateTrainer/" + newCertificateFileName;
             //db
             trainer.certificateUrl = imageCertificatePath;
             trainer.cvURL = imageCVPath;
@@ -205,11 +205,9 @@ namespace Pt_For_Me.Controllers
 
         [Route("AcceptTrainer")]
         [HttpPut]
-        public async Task<IActionResult> AcceptTrainer([FromBody] Trainer trainer)
+        public IActionResult AcceptTrainer([FromBody] Trainer trainer)
         {
             var result = _PtForMeRepository.AcceptTrainer(trainer.id);
-
-
             return Ok(result);
         }
 
@@ -278,6 +276,13 @@ namespace Pt_For_Me.Controllers
             return Ok(result);
         }
 
+        [Route("GetCallerIDByUserID")]
+        [HttpGet]
+        public IActionResult GetCallerIDByUserID([FromBody] User user)
+        {
+            var result = _PtForMeRepository.GetCallerIDByUserID(user.id);
+            return Ok(result);
+        }
 
         [Route("GetTrainerCountByExperience")]
         [HttpGet]
@@ -373,9 +378,17 @@ namespace Pt_For_Me.Controllers
             return File(fileStream, "image/jpeg");
         }
 
+        [Route("AddUserPackageByUserID")]
+        [HttpPost]
+        public IActionResult AddUserPackageByUserID(UserPackage userPackage)
+        {
+            //int UserID , int PackageID , int TrainerID ,  DateTime startime , DateTime endtime , int Bundle
+            var result = _PtForMeRepository.AddUserPacakgesByUserID(userPackage.UserID, userPackage.PackageID, userPackage.TrainerID, userPackage.starttime, userPackage.endtime, userPackage.Bundle);
+            return Ok(result);
+        }
         //this api will allow us to generate tokens for trainer for agora that we are using for the videocalling (to be able to have a token for each trainer )
 
-        [HttpPost("GenerateAgoraToken")]
+        /*[HttpPost("GenerateAgoraToken")]
         public async Task<IActionResult> GenerateAgoraToken([FromBody] Trainer trainer)
         {
         
@@ -407,7 +420,9 @@ namespace Pt_For_Me.Controllers
             var token = await response.Content.ReadAsStringAsync();
 
             return Ok(token);
-        }
+        }*/
+
+
     }
 
 }

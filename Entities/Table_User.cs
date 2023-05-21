@@ -12,5 +12,6 @@
         public string ProfileURL { get; set; }
         public string Email { get; set; }
         public string Device_Token { get; set; }
+        public int CallerID { get; set; }
     }
 }

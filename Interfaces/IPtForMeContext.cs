@@ -12,7 +12,7 @@ public interface IPtForMeContext
     DbSet<Table_User> Table_User { get; set; }
         DbSet<Table_Health> Table_Health { get; set; }
         DbSet<Table_Goal> Table_Goal { get; set; }
-        DbSet<Table_UserPackage> Table_UserPackages { get; set; }
+        DbSet<Table_UserPackage> Table_UserPackage { get; set; }
     DbSet<Table_PaymentInfo> Table_PaymentInfo { get; set; }
 
     //trainer related tables
@@ -24,6 +24,7 @@ public interface IPtForMeContext
     //Tables related to both
         DbSet<Table_Session> Table_Session { get; set; }
         DbSet<Table_Package> Table_Package { get; set; }
+       
 
     //STORED PROCEDURES
     //for client display

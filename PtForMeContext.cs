@@ -20,7 +20,7 @@ namespace Pt_For_Me
         public virtual DbSet<Table_User> Table_User { get; set; }
         public virtual DbSet<Table_Health> Table_Health { get; set; }
         public virtual DbSet<Table_Goal> Table_Goal { get; set; }
-        public virtual DbSet<Table_UserPackage> Table_UserPackages { get; set; }
+        public virtual DbSet<Table_UserPackage> Table_UserPackage { get; set; }
         public virtual DbSet<Table_PaymentInfo> Table_PaymentInfo { get; set; }
 
         //trainer related tables
