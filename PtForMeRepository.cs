@@ -51,7 +51,7 @@ namespace Pt_For_Me
             ResponseModel<object> response = new ResponseModel<object>();
             try
             {
-                response.Data = _context.Table_Package.ToList();
+                response.Data = _context.Table_TrainerBlockedDay.Where(t => t.TrainerID == TrainerID).FirstOrDefault();
                 response.IsSuccess = true;
                 return response;
             }catch
@@ -1050,6 +1050,7 @@ namespace Pt_For_Me
                              {
                                  row.UserID,
                                  row.Trainer_Name,
+                                 row.TrainerID,
                                  row.RoomID,
                                  row.Start_Time,
                                  row.End_Time,
@@ -1137,6 +1138,42 @@ namespace Pt_For_Me
 
                     response.Data = true;
                     response.Message = "Goal added successfully";
+                }
+                return response;
+
+
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                return response;
+            }
+        }
+         public ResponseModel<bool> AddSessionInfoByUserID(int UserID , int TrainerID , string Review , int Rating )
+        {
+            ResponseModel<bool> response = new ResponseModel<bool>();
+
+            try
+            {
+                response.Data = false;
+                response.IsSuccess = true;
+                response.Message = "Unable to save the session .";
+
+                Table_Session session = new Table_Session();
+                {
+
+                    session.UserID = UserID;
+                    session.TrainerID = TrainerID;
+                    session.Review = Review;
+                    session.Rating = Rating;
+                    session.isAccepted = null;
+                    //saving the  user to the db
+                    _context.Table_Session.Add(session);
+                    _context.SaveChanges();
+
+                    response.Data = true;
+                    response.Message = "Session saved successfully";
                 }
                 return response;
 

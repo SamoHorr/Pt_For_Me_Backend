@@ -49,6 +49,7 @@ namespace Pt_For_Me.Interfaces
         ResponseModel <int> GetTrainerRating(int TrainerID);
         ResponseModel<object> GetTrainerBlockedTime(int TrainerID);
         ResponseModel<Guid> GetUserAuthToken(string username);
+        ResponseModel<bool> AddSessionInfoByUserID(int UserID, int TrainerID, string Review, int Rating);
     }
 
 

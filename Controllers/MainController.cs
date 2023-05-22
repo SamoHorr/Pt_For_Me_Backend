@@ -308,6 +308,15 @@ namespace Pt_For_Me.Controllers
             return Ok(result);
         }
 
+
+        [Route("AddSessionInfoByUserID")]
+        [HttpPost]
+        public IActionResult AddSessionInfoByUserID([FromBody] Session session)
+        {
+            var result = _PtForMeRepository.AddSessionInfoByUserID(session.UserID , session.TrainerID , session.review , session.rating);
+            return Ok(result);
+        }
+
         [Route("GetTrainerByTrainerID")]
         [HttpGet]
         public IActionResult GetTrainerByTrainerID([FromBody] Trainer trainer)
