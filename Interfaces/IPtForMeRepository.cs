@@ -11,6 +11,8 @@ namespace Pt_For_Me.Interfaces
         ResponseModel<bool> LoginUser(string username, string password);
         ResponseModel<bool> LoginTrainer(string username, string password);
         ResponseModel<int> LoginWebsite(string username, string password);
+        public bool CheckAuthenticationTokenValidity(string authToken);
+        ResponseModel<bool> LogoutWebsite(string authToken);
         ResponseModel<bool> CheckUser(string DeviceID, string username, string password);
         ResponseModel<bool> CheckTrainer(string DeviceID, string username, string password);
         ResponseModel<object> GetAllTrainers();
@@ -34,7 +36,7 @@ namespace Pt_For_Me.Interfaces
         ResponseModel<bool> DeclineReview(int SessionID);
         ResponseModel<bool> AcceptReview(int SessionID);
         ResponseModel<object> GetAcceptedReviewByTrainerID(int TrainerID);
-        ResponseModel<int> GetCallerIDByUserID(int UserID);
+       // ResponseModel<int> GetCallerIDByUserID(int UserID);
       
         ResponseModel<bool> AddUserPacakgesByUserID(int UserID, int PackageID, int TrainerID, int Bundle);
         //ResponseModel<bool> AddBookedSessionByUserID(int UserID);

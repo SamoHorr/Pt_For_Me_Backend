@@ -103,6 +103,36 @@ namespace Pt_For_Me.Controllers
             //  var result = _PtForMeRepository.LoginWebsite(user);
             return Ok(result);
         }
+
+        [Route("CheckAuthenticationTokenValidity")]
+        [HttpPost]
+        [EnableCors("AllowAllOrigins")]
+        public IActionResult CheckAuthenticationTokenValidity([FromBody] TokenRequest tokenRequest)
+        {
+            Response.Headers.Add("Access-Control-Allow-Origin", "http://localhost:4000");
+            Response.Headers.Add("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+            Response.Headers.Add("Access-Control-Allow-Headers", "Content-Type");
+
+            var isValidToken = _PtForMeRepository.CheckAuthenticationTokenValidity(tokenRequest.AuthToken);
+
+            if (isValidToken)
+            {
+                return Ok("Token is valid.");
+            }
+            else
+            {
+                return Unauthorized("Token is invalid or expired.");
+            }
+        }
+
+
+        [Route("WebsiteLogout")]
+        [HttpPost]
+        public IActionResult LogoutWebsite([FromBody] string authToken)
+        {
+            var result = _PtForMeRepository.LogoutWebsite(authToken);
+            return Ok(result);
+        }
         //[Route("CreateNewTrainer")]
         // [HttpPost]
         //public IActionResult CreateNewTrainer([FromBody] Trainer trainer)
@@ -276,13 +306,13 @@ namespace Pt_For_Me.Controllers
             return Ok(result);
         }
 
-        [Route("GetCallerIDByUserID")]
+/*        [Route("GetCallerIDByUserID")]
         [HttpGet]
         public IActionResult GetCallerIDByUserID([FromBody] User user)
         {
             var result = _PtForMeRepository.GetCallerIDByUserID(user.id);
             return Ok(result);
-        }
+        }*/
 
         [Route("GetTrainerCountByExperience")]
         [HttpGet]

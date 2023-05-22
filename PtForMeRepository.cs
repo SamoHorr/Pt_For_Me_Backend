@@ -45,7 +45,7 @@ namespace Pt_For_Me
                 return response;
             }
         }
-        public ResponseModel<int> GetCallerIDByUserID(int UserID)
+/*        public ResponseModel<int> GetCallerIDByUserID(int UserID)
         {
             ResponseModel<int> response = new ResponseModel<int>();
             try
@@ -69,7 +69,7 @@ namespace Pt_For_Me
                 response.IsSuccess = false;
                 return response;
             }
-        }
+        }*/
         public ResponseModel<bool> CreateUser(string firstname, string lastname, DateTime DOB, string username, string password, string profileURL ,string email, string DeviceToken)
         {
             ResponseModel<bool> response = new ResponseModel<bool>();
@@ -108,7 +108,6 @@ namespace Pt_For_Me
                         LastName = lastname,
                         ProfileURL = profileURL,
                         DOB = DOB,
-                        CallerID = randomNumber,
                     };
                     //saving the new user to the db
                     _context.Table_User.Add(newUser);
@@ -248,8 +247,18 @@ namespace Pt_For_Me
                 response.IsSuccess = true;
                 response.Message = "INVALID INFORMATION";
 
-                if (_context.Table_User.Where(u => u.Username == username && u.Password == password).FirstOrDefault() != null)
+                var user = _context.Table_User.FirstOrDefault(u => u.Username == username && u.Password == password);
+                if (user != null)
                 {
+                    // generating a GUID token for authentication also after one hour session expires
+                    var authToken = Guid.NewGuid();
+                    var expirationTime = DateTime.UtcNow.AddHours(1);
+
+                    //saving it in db
+                    user.AuthToken = authToken;
+                    user.ExpirationDate = expirationTime;
+                    _context.SaveChanges();
+
                     response.Data = 1;
                     response.Message = "CLIENT LOGIN SUCCESSFUL";
                 }  else if ( username == "admin" && password == "admin")
@@ -268,6 +277,52 @@ namespace Pt_For_Me
                 return response;
             }
         }
+        public bool CheckAuthenticationTokenValidity(string authToken)
+        {
+            var user = _context.Table_User.FirstOrDefault(u => u.AuthToken.ToString() == authToken);
+            if (user != null && user.ExpirationDate.HasValue && user.ExpirationDate.Value > DateTime.UtcNow)
+            {
+                //valid token
+                return true;
+            }
+
+           //invalid token
+            return false;
+        }
+
+        public ResponseModel<bool> LogoutWebsite(string authToken)
+        {
+            ResponseModel<bool> response = new ResponseModel<bool>();
+
+            try
+            {
+                response.Data = false;
+                response.IsSuccess = false;
+                response.Message = "LOGOUT FAILED";
+
+                var user = _context.Table_User.FirstOrDefault(u => u.AuthToken.ToString() == authToken);
+                if (user != null)
+                {
+                    // Invalidate the AuthToken by setting it to null
+                    user.AuthToken = null;
+                    _context.SaveChanges();
+
+                    response.Data = true;
+                    response.IsSuccess = true;
+                    response.Message = "LOGOUT SUCCESSFUL";
+                }
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                return response;
+            }
+        }
+
+
         public ResponseModel<bool> CheckUser(string DeviceID, string username, string password)
         {
             ResponseModel<bool> response = new ResponseModel<bool>();
