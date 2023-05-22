@@ -23,7 +23,8 @@ namespace Pt_For_Me
                 response.Data = _context.Table_User.ToList();
                 response.IsSuccess = true;
                 return response;
-            } catch
+            }
+            catch
             {
                 response.IsSuccess = false;
                 return response;
@@ -36,7 +37,7 @@ namespace Pt_For_Me
             try
             {
                 response.Data = _context.Table_Package.ToList();
-                response.IsSuccess=true;
+                response.IsSuccess = true;
                 return response;
             }
             catch
@@ -45,32 +46,46 @@ namespace Pt_For_Me
                 return response;
             }
         }
-/*        public ResponseModel<int> GetCallerIDByUserID(int UserID)
+        public ResponseModel<object> GetTrainerBlockedTime(int TrainerID)
         {
-            ResponseModel<int> response = new ResponseModel<int>();
+            ResponseModel<object> response = new ResponseModel<object>();
             try
             {
-                var user = _context.Table_User.FirstOrDefault(u => u.ID == UserID);
-                if (user != null)
-                {
-                    response.Data = user.CallerID;
-                    response.Message = "User CallerID found";
-                    response.IsSuccess = true;
-                }
-                else
-                {
-                    response.IsSuccess = false;
-                    response.Message = "User not found";
-                }
+                response.Data = _context.Table_Package.ToList();
+                response.IsSuccess = true;
                 return response;
-            }
-            catch
+            }catch
             {
                 response.IsSuccess = false;
                 return response;
             }
-        }*/
-        public ResponseModel<bool> CreateUser(string firstname, string lastname, DateTime DOB, string username, string password, string profileURL ,string email, string DeviceToken)
+        }
+        /*        public ResponseModel<int> GetCallerIDByUserID(int UserID)
+                {
+                    ResponseModel<int> response = new ResponseModel<int>();
+                    try
+                    {
+                        var user = _context.Table_User.FirstOrDefault(u => u.ID == UserID);
+                        if (user != null)
+                        {
+                            response.Data = user.CallerID;
+                            response.Message = "User CallerID found";
+                            response.IsSuccess = true;
+                        }
+                        else
+                        {
+                            response.IsSuccess = false;
+                            response.Message = "User not found";
+                        }
+                        return response;
+                    }
+                    catch
+                    {
+                        response.IsSuccess = false;
+                        return response;
+                    }
+                }*/
+        public ResponseModel<bool> CreateUser(string firstname, string lastname, DateTime DOB, string username, string password, string profileURL, string email, string DeviceToken)
         {
             ResponseModel<bool> response = new ResponseModel<bool>();
 
@@ -80,19 +95,13 @@ namespace Pt_For_Me
                 response.IsSuccess = true;
                 response.Message = "ERROR OCCURED - INVALID INFORMATION ";
 
-                Table_User user = _context.Table_User.Where(u => u.Device_Token == DeviceToken ).FirstOrDefault();
+                Table_User user = _context.Table_User.Where(u => u.Device_Token == DeviceToken).FirstOrDefault();
                 //checking for similar usernames in db 
                 if (_context.Table_User.Any(u => u.Username == username))
                 {
                     response.Message = "Username already exists";
                     return response;
                 }
-
-                //variable randomly generated for caller id
-                Random random = new Random();
-                int min = 100000; // Minimum 6-digit number
-                int max = 999999; // Maximum 6-digit number
-                int randomNumber = random.Next(min, max + 1);
 
                 //if null adding the info to the appropriate fields
                 if (user == null)
@@ -126,7 +135,7 @@ namespace Pt_For_Me
             }
         }
 
-        public ResponseModel<bool> CreateTrainer(string firstname, string lastname, string username, string password, string email, string profileUrl ,string bio, int experience, int specialty, string DeviceToken, string imageCertificateURL, string imageCvURL)
+        public ResponseModel<bool> CreateTrainer(string firstname, string lastname, string username, string password, string email, string profileUrl, string bio, int experience, int specialty, string DeviceToken, string imageCertificateURL, string imageCvURL)
         {
             ResponseModel<bool> response = new ResponseModel<bool>();
 
@@ -136,8 +145,13 @@ namespace Pt_For_Me
                 response.IsSuccess = true;
                 response.Message = "ERROR OCCURED - INVALID INFORMATION";
 
-
                 Table_Trainer trainer = _context.Table_Trainer.Where(t => t.Device_Token == DeviceToken).FirstOrDefault();
+                //checking for similar usernames in db 
+                if (_context.Table_User.Any(u => u.Username == username))
+                {
+                    response.Message = "Username already exists";
+                    return response;
+                }
 
                 //if null adding the info to the appropriate fields
                 if (trainer == null)
@@ -160,7 +174,7 @@ namespace Pt_For_Me
                         CertificateURL = imageCertificateURL,
                         CVURL = imageCvURL,
                         isAccepted = false,
-                        Status = false, 
+                        Status = false,
 
                     };
                     //saving the new user to the db
@@ -256,12 +270,13 @@ namespace Pt_For_Me
 
                     //saving it in db
                     user.AuthToken = authToken;
-                    user.ExpirationDate = expirationTime;
+                    user.Expiration_Date = expirationTime;
                     _context.SaveChanges();
 
                     response.Data = 1;
                     response.Message = "CLIENT LOGIN SUCCESSFUL";
-                }  else if ( username == "admin" && password == "admin")
+                }
+                else if (username == "admin" && password == "admin")
                 {
                     response.Data = 2;
                     response.Message = "ADMIN LOGIN SUCCESSFUL";
@@ -280,13 +295,13 @@ namespace Pt_For_Me
         public bool CheckAuthenticationTokenValidity(string authToken)
         {
             var user = _context.Table_User.FirstOrDefault(u => u.AuthToken.ToString() == authToken);
-            if (user != null && user.ExpirationDate.HasValue && user.ExpirationDate.Value > DateTime.UtcNow)
+            if (user != null && user.Expiration_Date.HasValue && user.Expiration_Date.Value > DateTime.UtcNow)
             {
                 //valid token
                 return true;
             }
 
-           //invalid token
+            //invalid token
             return false;
         }
 
@@ -303,7 +318,7 @@ namespace Pt_For_Me
                 var user = _context.Table_User.FirstOrDefault(u => u.AuthToken.ToString() == authToken);
                 if (user != null)
                 {
-                    // Invalidate the AuthToken by setting it to null
+                    // Invalidatting the token by setting it to null
                     user.AuthToken = null;
                     _context.SaveChanges();
 
@@ -402,12 +417,13 @@ namespace Pt_For_Me
                              select new
                              {
                                  TrainerInfo = Group.Key,
-                                 Trainer = Group.Select(t => new { t.TrainerID ,  t.Firstname, t.Lastname, t.Bio, t.specialty , t.Experience })
+                                 Trainer = Group.Select(t => new { t.TrainerID, t.Firstname, t.Lastname, t.Bio, t.specialty, t.Experience })
                              };
                 response.Data = result.ToList().Take(50);
                 response.IsSuccess = true;
                 return response;
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 response.IsSuccess = false;
                 response.Message = ex.Message;
@@ -529,8 +545,8 @@ namespace Pt_For_Me
             }
 
         }
-       
-        public  ResponseModel<object> GetTrainerByTrainerID(int TrainerID)
+
+        public ResponseModel<object> GetTrainerByTrainerID(int TrainerID)
         {
 
             ResponseModel<object> response = new ResponseModel<object>();
@@ -552,7 +568,7 @@ namespace Pt_For_Me
                              let row = Group.First()
                              select new
                              {
-                                 Trainer = Group.Select(t => new { t.TrainerID , t.Firstname, t.Lastname, t.Bio , t.specialty , t.Experience })
+                                 Trainer = Group.Select(t => new { t.TrainerID, t.Firstname, t.Lastname, t.Bio, t.specialty, t.Experience })
                              };
                 response.Data = result.ToList();
                 response.IsSuccess = true;
@@ -576,20 +592,20 @@ namespace Pt_For_Me
                 response.IsSuccess = true;
                 response.Message = "Unable to accept the trainer, try again later";
 
-                Table_Trainer trainer = _context.Table_Trainer.Where(t => t.ID == TrainerID).FirstOrDefault();  
+                Table_Trainer trainer = _context.Table_Trainer.Where(t => t.ID == TrainerID).FirstOrDefault();
                 if (trainer != null)
                 {
-                  
-                    
-                        trainer.isAccepted = true; 
-                        trainer.Status = true;
-                        _context.SaveChanges();
 
-                        response.Message = "Trainer Accepted Successfully!";
-                        response.Data = true;
-                    
+
+                    trainer.isAccepted = true;
+                    trainer.Status = true;
+                    _context.SaveChanges();
+
+                    response.Message = "Trainer Accepted Successfully!";
+                    response.Data = true;
+
                 }
-                
+
                 return response;
 
 
@@ -650,8 +666,8 @@ namespace Pt_For_Me
                              select new
                              {
 
-                               row.ExperienceCategory,
-                               row.TrainerCount,
+                                 row.ExperienceCategory,
+                                 row.TrainerCount,
                              };
 
                 response.Data = result.ToList();
@@ -688,7 +704,7 @@ namespace Pt_For_Me
                 response.IsSuccess = true;
                 response.Message = "Retrieved the package for the trainer";
                 return response;
-                             
+
             }
             catch (Exception ex)
             {
@@ -727,7 +743,7 @@ namespace Pt_For_Me
                 return response;
             }
         }
-        public ResponseModel<bool> AddUserPacakgesByUserID(int UserID , int PackageID , int TrainerID , int Bundle )
+        public ResponseModel<bool> AddUserPacakgesByUserID(int UserID, int PackageID, int TrainerID, int Bundle)
         {
             ResponseModel<bool> response = new ResponseModel<bool>();
 
@@ -753,10 +769,10 @@ namespace Pt_For_Me
                     Table_UserPackage newPackage = new Table_UserPackage
 
                     {
-                      UserID = UserID,
-                      PackageID = PackageID,
-                      Bundle = Bundle , 
-                      RoomID = randomNumber,
+                        UserID = UserID,
+                        PackageID = PackageID,
+                        Bundle = Bundle,
+                        RoomID = randomNumber,
                     };
                     //saving the new user to the db
                     _context.Table_UserPackage.Add(newPackage);
@@ -764,9 +780,10 @@ namespace Pt_For_Me
 
                     response.Message = "User Package Created Successfully";
                     response.Data = true;
-                }else if (package != null)
+                }
+                else if (package != null)
                 {
-                    response.Message = "You already have a bought package with the trainer"; 
+                    response.Message = "You already have a bought package with the trainer";
                 }
                 return response;
             }
@@ -873,7 +890,38 @@ namespace Pt_For_Me
             }
         }
 
+        public ResponseModel<bool> AddBlockedTimeByTrainerID(int TrainerID, DateTime startTime, DateTime endTime)
+        {
+            ResponseModel<bool> response = new ResponseModel<bool>();
+            try
+            {
+                response.Data = false;
+                response.IsSuccess = true;
+                response.Message = "ERROR OCCURED - INVALID INFORMATION";
 
+
+                Table_TrainerBlockedDay blockedDay = new Table_TrainerBlockedDay();
+                blockedDay.TrainerID = TrainerID;
+                blockedDay.Day_BlockedStart = startTime;
+                blockedDay.Day_BlockedEnd = endTime;
+
+                _context.Table_TrainerBlockedDay.Add(blockedDay);
+                _context.SaveChanges();
+
+
+
+                response.Message = "Trainer successfully blocked time !";
+                response.Data = true;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                return response;
+            }
+
+        }
         /*        public ResponseModel<bool> AddBookedSessionByUserID(int UserID ,DateTime startTime , DateTime endTime)
                 {
                     ResponseModel<bool> response = new ResponseModel<bool>();
@@ -961,12 +1009,65 @@ namespace Pt_For_Me
                         return response;
                     }
                 }*/
-        /*       public ResponseModel<object> GetSessionInfoByTrainerID (int TrainerID)
-               {
+        public ResponseModel<object> GetSessionInfoByTrainerID(int TrainerID)
+        {
+            ResponseModel<object> response = new ResponseModel<object>();
+            try
+            {
+                var obj = _context.GetSessionInfoByTrainerID_Result.FromSqlInterpolated<GetSessionInfoByTrainerID_Result>($"Execute SP_GetSessionInfoByTrainerID {TrainerID}");
+                var result = from row in obj.AsEnumerable()
+                             select new
+                             {
+                                 row.TrainerID,
+                                 row.Client_Name,
+                                 row.HealthRisk,
+                                 row.Injury,
+                                 row.RoomID,
+                                 row.Start_Time,
+                                 row.End_Time,
+                             };
+                response.Data = result.ToList();
+                response.IsSuccess = true;
+                response.Message = "Retrieved the session info for the trainer";
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                return response;
+            }
 
+        }
+        public ResponseModel<object> GetSessionInfoByUserID(int UserID)
+        {
+            ResponseModel<object> response = new ResponseModel<object>();
+            try
+            {
+                var obj = _context.GetSessionInfoByUserID_Result.FromSqlInterpolated<GetSessionInfoByUserID_Result>($"Execute SP_GetSessionInfoByUserID {UserID}");
+                var result = from row in obj.AsEnumerable()
+                             select new
+                             {
+                                 row.UserID,
+                                 row.Trainer_Name,
+                                 row.RoomID,
+                                 row.Start_Time,
+                                 row.End_Time,
+                             };
+                response.Data = result.ToList();
+                response.IsSuccess = true;
+                response.Message = "Retrieved the session info for the user";
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                return response;
+            }
 
-               }*/
-        public ResponseModel<bool> AddClientHealthRiskOrInjury(int UserID , string healthRisk , string injury)
+        }
+        public ResponseModel<bool> AddClientHealthRiskOrInjury(int UserID, string healthRisk, string injury)
         {
             ResponseModel<bool> response = new ResponseModel<bool>();
 
@@ -984,11 +1085,11 @@ namespace Pt_For_Me
                     {
                         UserID = UserID,
                         HealthRisk = healthRisk,
-                        Injury = injury,     
+                        Injury = injury,
 
                     };
 
-                   
+
                     //saving the new user to the db
                     _context.Table_Health.Add(newHealth);
                     _context.SaveChanges();
@@ -1052,29 +1153,29 @@ namespace Pt_For_Me
         {
             ResponseModel<object> response = new ResponseModel<object>();
             response.Message = "Unable to retrieve user count";
-                try
-                {
-                    var obj = _context.GetUserCountByAge_Result.FromSqlInterpolated<GetUserCountByAge_Result>($"EXECUTE SP_GetUserCountByAge");
+            try
+            {
+                var obj = _context.GetUserCountByAge_Result.FromSqlInterpolated<GetUserCountByAge_Result>($"EXECUTE SP_GetUserCountByAge");
 
-                         var result = from row in obj.AsEnumerable()
-                         select new
-                         {
+                var result = from row in obj.AsEnumerable()
+                             select new
+                             {
 
-                             row.YearOfBirth,
-                             row.UserCount,
-                         };
+                                 row.YearOfBirth,
+                                 row.UserCount,
+                             };
 
-                    response.Data = result.ToList();
-                    response.IsSuccess = true;
-                    response.Message = "Retrieved user count successfully!";
-                    return response;
-                }
-                catch (Exception ex)
-                {
-                    response.IsSuccess = false;
-                    response.Message = ex.Message;
-                    return response;
-                }
+                response.Data = result.ToList();
+                response.IsSuccess = true;
+                response.Message = "Retrieved user count successfully!";
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                return response;
+            }
         }
 
         public ResponseModel<object> GetUserCountByGoal()
@@ -1165,7 +1266,7 @@ namespace Pt_For_Me
             }
         }
 
-        public ResponseModel<bool> DeclineReview (int SessionID)
+        public ResponseModel<bool> DeclineReview(int SessionID)
         {
             ResponseModel<bool> response = new ResponseModel<bool>();
 
@@ -1227,6 +1328,70 @@ namespace Pt_For_Me
                 return response;
             }
         }
+
+        public ResponseModel<object> GetClientInfoByUserID(int UserID)
+        {
+            ResponseModel<object> response = new ResponseModel<object>();
+            response.Message = "Unable to get theinformation for this user";
+            try
+            {
+                var obj = _context.GetClientInfoByUserID_Result.FromSqlInterpolated<GetClientInfoByUserID_Result>($"EXECUTE SP_GetClientInfoByUserID {UserID}");
+                var result = from row in obj.AsEnumerable()
+                             select new
+                             {
+                                 row.UserID,
+                                 row.Username,
+                                 row.Password,
+                                 row.Profile_Url,
+                                 row.Goal,
+                                 row.TargetWeight,
+                                 row.Health_Risk,
+                                 row.Injury
+                             };
+                response.Data = result.ToList();
+                response.IsSuccess = true;
+                response.Message = "Retrieved user information sucessfully";
+                return response;
+
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                return response;
+            }
+        }
+        public ResponseModel<object> GetTrainersBySpecialtyKeyword(string Keyword)
+        {
+            ResponseModel<object> response = new ResponseModel<object>();
+            response.Message = "Unable to find the trainer with the specified keyword";
+            try
+            {
+                var obj = _context.GetTrainersBySpecialtyKeyword_Result.FromSqlInterpolated<GetTrainersBySpecialtyKeyword_Result>($"Execute SP_GetTrainersBySpecialtyKeyword {Keyword}");
+                var result = from row in obj.AsEnumerable()
+                             select new
+                             {
+                                 row.TrainerID,
+                                 row.Firstname,
+                                 row.Lastname,
+                                 row.Bio,
+                                 row.Experience,
+                                 row.ProfileURL,
+                                 row.Specialty,
+                             };
+                response.Data = result.ToList();
+                response.IsSuccess = true;
+                response.Message = "Retrieved specified trainers";
+                return response;
+
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                return response;
+            }
+        }
         public ResponseModel<string> GetDeviceIDFromTrainerID(int TrainerID)
         {
             ResponseModel<string> response = new ResponseModel<String>();
@@ -1252,6 +1417,53 @@ namespace Pt_For_Me
             try
             {
                 response.Data = _context.Table_Trainer.Where(t => t.ID == TrainerID).FirstOrDefault().FirstName + " channel";
+                response.IsSuccess = true;
+                return response;
+
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                return response;
+            }
+        }
+        public ResponseModel<int> GetTrainerRating(int TrainerID)
+        {
+            ResponseModel<int> response = new ResponseModel<int>();
+            response.Message = "Unable to get the trainer Rating ";
+            try
+            {
+                var obj = _context.GetTrainerRating_Result.FromSqlInterpolated<GetTrainerRating_Result>($"EXECUTE SP_GetTrainerRating {TrainerID}");
+                var result = from row in obj.AsEnumerable()
+                             select new
+                             {
+                                 row.AverageRating,
+                             };
+                response.Data = result.FirstOrDefault()?.AverageRating ?? 0;
+                response.IsSuccess = true;
+                response.Message = "Retrieved user information sucessfully";
+                return response;
+
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                return response;
+            }
+        }
+
+        public ResponseModel<Guid> GetUserAuthToken(string username)
+        {
+            //we can use username since we dont allow same usernames
+            ResponseModel<Guid> response = new ResponseModel<Guid>();
+            response.Message = "Unable to get the user token";
+            try
+            { 
+                var token = _context.Table_User.Where(u => u.Username == username).FirstOrDefault().AuthToken;
+                //at the beginning authToken needs to be empty so ?GUID the ??Guid is to stop casting issue
+                response.Data = token ?? Guid.Empty;
                 response.IsSuccess = true;
                 return response;
 

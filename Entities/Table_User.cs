@@ -14,6 +14,6 @@
         public string Device_Token { get; set; }
         //secure website login 
         public Guid? AuthToken { get; set; }
-        public DateTime? ExpirationDate { get; set; }
+        public DateTime? Expiration_Date { get; set; }
     }
 }

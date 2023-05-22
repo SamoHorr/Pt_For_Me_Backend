@@ -6,8 +6,8 @@ namespace Pt_For_Me.Interfaces
     public interface IPtForMeRepository
     {
         ResponseModel<object> GetUsers();
-        ResponseModel<bool> CreateUser(string firstname, string lastname, DateTime DOB, string username, string password, string profileURL , string email, string DeviceToken );
-        ResponseModel<bool> CreateTrainer(string firstname, string lastname, string username , string password , string email, string profileURL ,  string bio, int experience , int specialty , string DeviceToken, string imageCertificateURL, string imageCvURL);
+        ResponseModel<bool> CreateUser(string firstname, string lastname, DateTime DOB, string username, string password, string profileURL, string email, string DeviceToken);
+        ResponseModel<bool> CreateTrainer(string firstname, string lastname, string username, string password, string email, string profileURL, string bio, int experience, int specialty, string DeviceToken, string imageCertificateURL, string imageCvURL);
         ResponseModel<bool> LoginUser(string username, string password);
         ResponseModel<bool> LoginTrainer(string username, string password);
         ResponseModel<int> LoginWebsite(string username, string password);
@@ -21,8 +21,8 @@ namespace Pt_For_Me.Interfaces
         ResponseModel<object> GetTrainerVerificationStatus(int TrainerID);
         ResponseModel<object> GetTrainerByTrainerID(int TrainerID);
         ResponseModel<bool> AddClientHealthRiskOrInjury(int UserID, string healthRisk, string injury);
-        ResponseModel<bool> AddClientGoal(int UserID , string description, int targetWeight, DateTime date); 
-        ResponseModel<object> GetGeneralPackages ();
+        ResponseModel<bool> AddClientGoal(int UserID, string description, int targetWeight, DateTime date);
+        ResponseModel<object> GetGeneralPackages();
         ResponseModel<bool> AcceptTrainer(int TrainerID);
         ResponseModel<bool> DeclineTrainer(int TrainerID);
         ResponseModel<object> GetTrainerCountByExperience();
@@ -36,14 +36,21 @@ namespace Pt_For_Me.Interfaces
         ResponseModel<bool> DeclineReview(int SessionID);
         ResponseModel<bool> AcceptReview(int SessionID);
         ResponseModel<object> GetAcceptedReviewByTrainerID(int TrainerID);
-       // ResponseModel<int> GetCallerIDByUserID(int UserID);
-      
+        // ResponseModel<int> GetCallerIDByUserID(int UserID);
         ResponseModel<bool> AddUserPacakgesByUserID(int UserID, int PackageID, int TrainerID, int Bundle);
         //ResponseModel<bool> AddBookedSessionByUserID(int UserID);
         ResponseModel<bool> AddBookedSessionByUserID(int UserID, DateTime startTime, DateTime endTime);
-       // ResponseModel<object> GetSessionInfoByTrainerID (int TrainerID);
+        // ResponseModel<object> GetSessionInfoByTrainerID (int TrainerID);
+        ResponseModel<object> GetTrainersBySpecialtyKeyword(string Keyword);
+        ResponseModel<object> GetClientInfoByUserID(int UserID);
+        ResponseModel<bool> AddBlockedTimeByTrainerID(int TrainerID, DateTime startTime, DateTime endTime);
+        ResponseModel<object> GetSessionInfoByTrainerID(int TrainerID);
+        ResponseModel<object> GetSessionInfoByUserID(int UserID);
+        ResponseModel <int> GetTrainerRating(int TrainerID);
+        ResponseModel<object> GetTrainerBlockedTime(int TrainerID);
+        ResponseModel<Guid> GetUserAuthToken(string username);
     }
 
 
-    
+
 }

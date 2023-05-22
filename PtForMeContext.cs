@@ -47,6 +47,11 @@ namespace Pt_For_Me
         public virtual DbSet<GetUserCountByGoals_Result> GetUserCountByGoals_Result { get; set; }
         public virtual DbSet<GetPendingReviews_Result> GetPendingReviews_Result { get; set; }
         public virtual DbSet<GetAcceptedReviewByTrainerID_Result> GetAcceptedReviewByTrainerID_Result { get; set; }
+        public virtual DbSet<GetTrainersBySpecialtyKeyword_Result> GetTrainersBySpecialtyKeyword_Result { get; set; }
+        public virtual DbSet<GetClientInfoByUserID_Result> GetClientInfoByUserID_Result { get; set; }
+        public virtual DbSet<GetSessionInfoByTrainerID_Result> GetSessionInfoByTrainerID_Result { get; set; }
+        public virtual DbSet<GetSessionInfoByUserID_Result> GetSessionInfoByUserID_Result { get; set; }
+        public virtual DbSet<GetTrainerRating_Result> GetTrainerRating_Result { get; set; }
         protected override void OnModelCreating (ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Table_User>(entity =>
@@ -149,6 +154,27 @@ namespace Pt_For_Me
             {
                 entity.HasNoKey();
             });
+            modelBuilder.Entity<GetTrainersBySpecialtyKeyword_Result>(entity =>
+            {
+                entity.HasKey(entity => entity.TrainerID);
+            });
+            modelBuilder.Entity<GetClientInfoByUserID_Result>(entity =>
+            {
+                entity.HasKey(entity => entity.UserID);
+            });
+            modelBuilder.Entity<GetSessionInfoByTrainerID_Result>(entity =>
+            {
+                entity.HasKey(entity => entity.TrainerID);
+            });
+            modelBuilder.Entity<GetSessionInfoByUserID_Result>(entity =>
+            {
+                entity.HasKey(entity => entity.UserID);
+            });
+            modelBuilder.Entity<GetTrainerRating_Result>(entity =>
+            {
+                entity.HasKey(entity => entity.TrainerID);
+            });
+
         }
     }
 }

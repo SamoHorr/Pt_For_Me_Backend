@@ -56,6 +56,32 @@ namespace Pt_For_Me.Controllers
                 return Ok(e.Message);
             }
         }
+
+        [Route("GetTrainerBlockedTime")]
+        [HttpGet]
+        public IActionResult GetTrainerBlockedTime([FromBody] Trainer trainer)
+        {
+            try
+            {
+                var result = _PtForMeRepository.GetTrainerBlockedTime(trainer.id);
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                return Ok(e.Message);
+            }
+        }
+
+        [Route("GetUserAuthToken")]
+        [HttpGet]
+        public IActionResult GetUserAuthToken([FromBody] User user)
+        {
+            
+                var result = _PtForMeRepository.GetUserAuthToken(user.username);
+                return Ok(result);
+            
+        }
+
         [Route("CreateNewClient")]
         [HttpPost]
         public IActionResult CreateNewClient([FromForm] User user, [FromForm(Name = "ProfilePic")] IFormFile imageProfile)
@@ -91,8 +117,8 @@ namespace Pt_For_Me.Controllers
             return Ok(result);
         }
 
-      [Route("WebsiteLogin")]
-      [HttpPost]
+        [Route("WebsiteLogin")]
+        [HttpPost]
         [EnableCors("AllowAllOrigins")]
         public IActionResult LoginWebsite([FromBody] User user)
         {
@@ -113,9 +139,9 @@ namespace Pt_For_Me.Controllers
             Response.Headers.Add("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
             Response.Headers.Add("Access-Control-Allow-Headers", "Content-Type");
 
-            var isValidToken = _PtForMeRepository.CheckAuthenticationTokenValidity(tokenRequest.AuthToken);
+            var isValid = _PtForMeRepository.CheckAuthenticationTokenValidity(tokenRequest.AuthToken);
 
-            if (isValidToken)
+            if (isValid)
             {
                 return Ok("Token is valid.");
             }
@@ -306,13 +332,13 @@ namespace Pt_For_Me.Controllers
             return Ok(result);
         }
 
-/*        [Route("GetCallerIDByUserID")]
-        [HttpGet]
-        public IActionResult GetCallerIDByUserID([FromBody] User user)
-        {
-            var result = _PtForMeRepository.GetCallerIDByUserID(user.id);
-            return Ok(result);
-        }*/
+        /*        [Route("GetCallerIDByUserID")]
+                [HttpGet]
+                public IActionResult GetCallerIDByUserID([FromBody] User user)
+                {
+                    var result = _PtForMeRepository.GetCallerIDByUserID(user.id);
+                    return Ok(result);
+                }*/
 
         [Route("GetTrainerCountByExperience")]
         [HttpGet]
@@ -421,10 +447,58 @@ namespace Pt_For_Me.Controllers
         public IActionResult AddBookedSessionByUserID(BookedSession bookedSession)
         {
             //int UserID , int PackageID , int TrainerID ,  DateTime startime , DateTime endtime , int Bundle
-            var result = _PtForMeRepository.AddBookedSessionByUserID(bookedSession.UserID , bookedSession.startTime , bookedSession.endTime);
+            var result = _PtForMeRepository.AddBookedSessionByUserID(bookedSession.UserID, bookedSession.startTime, bookedSession.endTime);
             return Ok(result);
         }
 
+        [Route("GetTrainersBySpecialtyKeyword")]
+        [HttpGet]
+        public IActionResult GetTrainersBySpecialtyKeyword([FromBody] KeywordRequest request)
+        {
+            var result = _PtForMeRepository.GetTrainersBySpecialtyKeyword(request.Keyword);
+            return Ok(result);
+        }
+
+        [Route("GetClientInfoByUserID")]
+        [HttpGet]
+        public IActionResult GetClientInfoByUserID([FromBody] User user)
+        {
+            var result = _PtForMeRepository.GetClientInfoByUserID(user.id);
+            return Ok(result);
+        }
+
+        [Route("GetSessionInfoByTrainerID")]
+        [HttpGet]
+        public IActionResult GetSessionInfoByTrainerID([FromBody] Trainer trainer)
+        {
+            var result = _PtForMeRepository.GetSessionInfoByTrainerID(trainer.id);
+            return Ok(result);
+        }
+
+        [Route("GetSessionInfoByUserID")]
+        [HttpGet]
+        public IActionResult GetSessionInfoByUserID([FromBody] User user)
+        {
+            var result = _PtForMeRepository.GetSessionInfoByUserID(user.id);
+            return Ok(result);
+        }
+
+
+        [Route("AddBlockedTimeByTrainerID")]
+        [HttpPost]
+        public IActionResult AddBlockedTimeByTrainerID([FromBody] TrainerBlock trainer)
+        {
+            var result = _PtForMeRepository.AddBlockedTimeByTrainerID(trainer.TrainerID, trainer.Day_BlockedStart, trainer.Day_BlockedEnd);
+            return Ok(result);
+        }
+
+        [Route("GetTrainerRating")]
+        [HttpGet]
+        public IActionResult GetTrainerRating([FromBody] Trainer trainer)
+        {
+            var result = _PtForMeRepository.GetTrainerRating(trainer.id);
+            return Ok(result);
+        }
         //this api will allow us to generate tokens for trainer for agora that we are using for the videocalling (to be able to have a token for each trainer )
 
         /*[HttpPost("GenerateAgoraToken")]
