@@ -26,7 +26,7 @@ namespace Pt_For_Me
         //trainer related tables
         public virtual DbSet<Table_Trainer> Table_Trainer { get; set; }
         public virtual DbSet<Table_Specialty> Table_Specialty { get; set; }
-        public virtual DbSet<Table_TrainerBlockedDay> Table_TrainerBlockedDays { get; set; }
+        public virtual DbSet<Table_TrainerBlockedDay> Table_TrainerBlockedDay { get; set; }
 
 
         //Tables related to both

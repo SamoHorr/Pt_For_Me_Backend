@@ -722,7 +722,7 @@ namespace Pt_For_Me
                 return response;
             }
         }
-        public ResponseModel<bool> AddBookedSessionByUserID(int UserID ,DateTime startTime , DateTime endTime)
+        public ResponseModel<bool> AddBookedSessionByUserID(int UserID, DateTime startTime, DateTime endTime)
         {
             ResponseModel<bool> response = new ResponseModel<bool>();
             try
@@ -731,45 +731,186 @@ namespace Pt_For_Me
                 response.IsSuccess = true;
                 response.Message = "Cannot book a session currently";
 
-                //to check that the user has any/or some hours left
-                var bundle = _context.Table_UserPackage.Where(p => p.UserID == UserID).FirstOrDefault().Bundle;
-                //params from UserPackage
-                var trainerID = _context.Table_UserPackage.Where(p => p.UserID == UserID).FirstOrDefault().TrainerID;
-                var userPackageID = _context.Table_UserPackage.Where(p => p.UserID == UserID).FirstOrDefault().ID;
-                var roomID = _context.Table_UserPackage.Where(p => p.UserID == UserID).FirstOrDefault().RoomID;
+                // to check if the user has any/or some hours left
+                Table_UserPackage userPackage = _context.Table_UserPackage.FirstOrDefault(p => p.UserID == UserID);
 
-                if (bundle != null && bundle != 0)
+                if (userPackage != null)
                 {
-                    Table_BookedSession bookedSession = new Table_BookedSession();
-                    {
-                        bookedSession.UserPackageID = userPackageID;
-                        bookedSession.UserID = UserID;
-                        bookedSession.TrainerID = trainerID;
-                        bookedSession.RoomID = roomID;
-                        bookedSession.Start_Time = startTime;
-                        bookedSession.End_Time = endTime;
-                    }
-                    _context.Table_BookedSession.Add(bookedSession);
-                    _context.SaveChanges();
-                    response.Message = "User Session Booked Successfully";
-                    response.Data = true;
-                    
-                }
-                return response;
+                    var bundle = userPackage.Bundle;
+                    var trainerID = userPackage.TrainerID;
+                    var userPackageID = userPackage.ID;
+                    var roomID = userPackage.RoomID;
 
+                    // Check if the TrainerID exists in the Table_Trainer table
+                    var trainerExists = _context.Table_Trainer.Any(t => t.ID == trainerID);
+
+                    if (!trainerExists)
+                    {
+                        response.Message = "Invalid Trainer ID";
+                        response.Data = false;
+                        return response;
+                    }
+
+                    if (bundle != null && bundle != 0)
+                    {
+                        var trainerBlockedDays = _context.Table_TrainerBlockedDay.Where(t => t.TrainerID == trainerID).ToList();
+                        bool isTimeSlotAvailable = true;
+
+                        foreach (var trainerBlockedDay in trainerBlockedDays)
+                        {
+                            var blocked_startTime = trainerBlockedDay.Day_BlockedStart;
+                            var blocked_endTime = trainerBlockedDay.Day_BlockedEnd;
+
+                            if (blocked_startTime == startTime && blocked_endTime == endTime)
+                            {
+                                isTimeSlotAvailable = false;
+                                break; // exit the loop since the time slot is already taken
+                            }
+                        }
+
+                        if (isTimeSlotAvailable)
+                        {
+                            Table_BookedSession bookedSession = new Table_BookedSession()
+                            {
+                                UserPackageID = userPackageID,
+                                UserID = UserID,
+                                TrainerID = trainerID,
+                                RoomID = roomID,
+                                Start_Time = startTime,
+                                End_Time = endTime
+                            };
+
+                            _context.Table_BookedSession.Add(bookedSession);
+                            userPackage.Bundle = bundle - 1;
+
+                            Table_TrainerBlockedDay newtrainerBlock = new Table_TrainerBlockedDay()
+                            {
+                                TrainerID = trainerID,
+                                Day_BlockedStart = startTime,
+                                Day_BlockedEnd = endTime
+                            };
+                            _context.Table_TrainerBlockedDay.Add(newtrainerBlock);
+
+                            _context.SaveChanges();
+                            response.Message = "User Session Booked Successfully";
+                            response.Data = true;
+                        }
+                        else
+                        {
+                            response.Message = "That time slot is already taken";
+                            response.Data = false;
+                        }
+                    }
+                    else
+                    {
+                        response.Message = "You don't have any hours left";
+                        response.Data = false;
+                    }
+                }
+
+                return response;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 response.IsSuccess = false;
-                response.Message = ex.Message;
+                response.Message += " Inner Exception: " + ex.InnerException.Message;
                 return response;
             }
         }
- /*       public ResponseModel<object> GetSessionInfoByTrainerID (int TrainerID)
-        {
-           
 
-        }*/
+
+        /*        public ResponseModel<bool> AddBookedSessionByUserID(int UserID ,DateTime startTime , DateTime endTime)
+                {
+                    ResponseModel<bool> response = new ResponseModel<bool>();
+                    try
+                    {
+                        response.Data = false;
+                        response.IsSuccess = true;
+                        response.Message = "Cannot book a session currently";
+
+                        //to check that the user has any/or some hours left
+                        Table_UserPackage userPackage = _context.Table_UserPackage.Where(p => p.UserID == UserID).FirstOrDefault();
+                        {
+
+
+                            var bundle = _context.Table_UserPackage.Where(p => p.UserID == UserID).FirstOrDefault().Bundle;
+                            //params from UserPackage
+                            var trainerID = _context.Table_UserPackage.Where(p => p.UserID == UserID).FirstOrDefault().TrainerID;
+                            var userPackageID = _context.Table_UserPackage.Where(p => p.UserID == UserID).FirstOrDefault().ID;
+                            var roomID = _context.Table_UserPackage.Where(p => p.UserID == UserID).FirstOrDefault().RoomID;
+
+                            if (bundle != null && bundle != 0)
+                            {
+                                var trainerBlockedDays = _context.Table_TrainerBlockedDay.Where(t => t.TrainerID == trainerID).ToList();
+                                {
+                                    //because we could have same trainer id with several different timing
+                                    foreach (var trainerBlockedDay in trainerBlockedDays)
+                                    {
+
+                                        //need to check that the traine doesnt have anything blocked/booked off then
+                                        var blocked_startTime = _context.Table_TrainerBlockedDay.Where(t => t.TrainerID == trainerID).FirstOrDefault().Day_BlockedStart;
+                                        var blocked_endTime = _context.Table_TrainerBlockedDay.Where(t => t.TrainerID == trainerID).FirstOrDefault().Day_BlockedEnd;
+
+                                        if (blocked_startTime != startTime && blocked_endTime != endTime)
+                                        {
+                                            Table_BookedSession bookedSession = new Table_BookedSession();
+                                            {
+                                                bookedSession.UserPackageID = userPackageID;
+                                                bookedSession.UserID = UserID;
+                                                bookedSession.TrainerID = trainerID;
+                                                bookedSession.RoomID = roomID;
+                                                bookedSession.Start_Time = startTime;
+                                                bookedSession.End_Time = endTime;
+                                            }
+                                            //to save the booked session info
+                                            _context.Table_BookedSession.Add(bookedSession);
+                                            //to substract an hour from the package bought
+                                            userPackage.Bundle = bundle - 1;
+
+
+
+                                            //table trainer blocked needed so we can block hours in the table blocked hours 
+                                            Table_TrainerBlockedDay newtrainerBlock = new Table_TrainerBlockedDay();
+                                            newtrainerBlock.TrainerID = trainerID;
+                                            newtrainerBlock.Day_BlockedStart = startTime;
+                                            newtrainerBlock.Day_BlockedEnd = endTime;
+                                            _context.Table_TrainerBlockedDay.Add(newtrainerBlock);
+
+                                            _context.SaveChanges();
+                                            response.Message = "User Session Booked Successfully";
+                                            response.Data = true;
+                                        }
+                                        else
+                                        {
+                                            response.Message = "That time slot is already taken";
+                                            response.Data = false;
+                                        }
+                                    }
+                                }
+
+                            }else
+                            {
+                                response.Message = "You dont have any hours left";
+                                response.Data = false;
+                            }
+
+                        }
+
+                        return response;
+
+                    }
+                    catch(Exception ex)
+                    {
+                        response.IsSuccess = false;
+                        response.Message += " Inner Exception: " + ex.InnerException.Message;
+                        return response;
+                    }
+                }*/
+        /*       public ResponseModel<object> GetSessionInfoByTrainerID (int TrainerID)
+               {
+
+
+               }*/
         public ResponseModel<bool> AddClientHealthRiskOrInjury(int UserID , string healthRisk , string injury)
         {
             ResponseModel<bool> response = new ResponseModel<bool>();

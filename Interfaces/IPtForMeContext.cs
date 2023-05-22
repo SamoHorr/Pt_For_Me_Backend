@@ -19,7 +19,7 @@ public interface IPtForMeContext
     //trainer related tables
         DbSet<Table_Trainer> Table_Trainer { get; set; }
         DbSet<Table_Specialty> Table_Specialty { get; set; }
-        DbSet<Table_TrainerBlockedDay> Table_TrainerBlockedDays { get; set; }
+        DbSet<Table_TrainerBlockedDay> Table_TrainerBlockedDay { get; set; }
 
 
     //Tables related to both
