@@ -42,7 +42,7 @@ namespace Pt_For_Me.Interfaces
         ResponseModel<bool> AddBookedSessionByUserID(int UserID, DateTime startTime, DateTime endTime);
         // ResponseModel<object> GetSessionInfoByTrainerID (int TrainerID);
         ResponseModel<object> GetTrainersBySpecialtyKeyword(string Keyword);
-        ResponseModel<object> GetClientInfoByUserID(int UserID);
+        ResponseModel<object> GetClientInfoByUserID(string username);
         ResponseModel<bool> AddBlockedTimeByTrainerID(int TrainerID, DateTime startTime, DateTime endTime);
         ResponseModel<object> GetSessionInfoByTrainerID(int TrainerID);
         ResponseModel<object> GetSessionInfoByUserID(int UserID);

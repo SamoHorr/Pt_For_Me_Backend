@@ -554,9 +554,8 @@ namespace Pt_For_Me
             try
             {
                 var obj = _context.GetAllTrainers_Result.FromSqlInterpolated<GetAllTrainers_Result>($"EXECUTE SP_GetTrainerByTrainerID {TrainerID}");
-
                 var result = from row in obj.AsEnumerable()
-                             group row by (new
+                             select new
                              {
                                  row.TrainerID,
                                  row.Firstname,
@@ -564,14 +563,10 @@ namespace Pt_For_Me
                                  row.Bio,
                                  row.Experience,
                                  row.specialty,
-                             }) into Group
-                             let row = Group.First()
-                             select new
-                             {
-                                 Trainer = Group.Select(t => new { t.TrainerID, t.Firstname, t.Lastname, t.Bio, t.specialty, t.Experience })
                              };
                 response.Data = result.ToList();
                 response.IsSuccess = true;
+           
                 return response;
             }
             catch (Exception ex)
@@ -1366,13 +1361,13 @@ namespace Pt_For_Me
             }
         }
 
-        public ResponseModel<object> GetClientInfoByUserID(int UserID)
+        public ResponseModel<object> GetClientInfoByUserID(string username)
         {
             ResponseModel<object> response = new ResponseModel<object>();
             response.Message = "Unable to get theinformation for this user";
             try
             {
-                var obj = _context.GetClientInfoByUserID_Result.FromSqlInterpolated<GetClientInfoByUserID_Result>($"EXECUTE SP_GetClientInfoByUserID {UserID}");
+                var obj = _context.GetClientInfoByUserID_Result.FromSqlInterpolated<GetClientInfoByUserID_Result>($"EXECUTE SP_GetClientInfoByUserID {username}");
                 var result = from row in obj.AsEnumerable()
                              select new
                              {

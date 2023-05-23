@@ -19,10 +19,10 @@
         public bool ?isAccepted { get; set; }
 
         //images for the documents
-        public string ProfileURL { get; set; }
+        public string ?ProfileURL { get; set; }
         public string CertificateURL { get; set; }
         //public IFormFile CVUri { get; set; }
-        public string CVURL { get; set; }  
+        public string ?CVURL { get; set; }  
 
     }
 }

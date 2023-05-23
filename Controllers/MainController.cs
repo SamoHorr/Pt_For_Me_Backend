@@ -58,7 +58,7 @@ namespace Pt_For_Me.Controllers
         }
 
         [Route("GetTrainerBlockedTime")]
-        [HttpGet]
+        [HttpPost]
         public IActionResult GetTrainerBlockedTime([FromBody] Trainer trainer)
         {
             try
@@ -73,7 +73,7 @@ namespace Pt_For_Me.Controllers
         }
 
         [Route("GetUserAuthToken")]
-        [HttpGet]
+        [HttpPost]
         public IActionResult GetUserAuthToken([FromBody] User user)
         {
             
@@ -318,7 +318,7 @@ namespace Pt_For_Me.Controllers
         }
 
         [Route("GetTrainerByTrainerID")]
-        [HttpGet]
+        [HttpPost]
         public IActionResult GetTrainerByTrainerID([FromBody] Trainer trainer)
         {
             var result = _PtForMeRepository.GetTrainerByTrainerID(trainer.id);
@@ -358,7 +358,7 @@ namespace Pt_For_Me.Controllers
         }
 
         [Route("GetPackageByTrainerID")]
-        [HttpGet]
+        [HttpPost]
         public IActionResult GetPackageByTrainerID([FromBody] Trainer trainer)
         {
             var result = _PtForMeRepository.GetPackageByTrainerID(trainer.id);
@@ -469,10 +469,10 @@ namespace Pt_For_Me.Controllers
         }
 
         [Route("GetClientInfoByUserID")]
-        [HttpGet]
+        [HttpPost]
         public IActionResult GetClientInfoByUserID([FromBody] User user)
         {
-            var result = _PtForMeRepository.GetClientInfoByUserID(user.id);
+            var result = _PtForMeRepository.GetClientInfoByUserID(user.username);
             return Ok(result);
         }
 
