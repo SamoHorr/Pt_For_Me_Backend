@@ -255,7 +255,7 @@ namespace Pt_For_Me.Controllers
         [HttpGet]
         public IActionResult GetTrainerVerificationStatus([FromBody] Trainer trainer)
         {
-            var result = _PtForMeRepository.GetTrainerVerificationStatus(trainer.id);
+            var result = _PtForMeRepository.GetTrainerVerificationStatus(trainer.deviceToken);
             return Ok(result);
         }
 

@@ -513,11 +513,12 @@ namespace Pt_For_Me
             }
 
         }
-        public ResponseModel<object> GetTrainerVerificationStatus(int TrainerID)
+        public ResponseModel<object> GetTrainerVerificationStatus(string deviceToken)
         {
             ResponseModel<object> response = new ResponseModel<object>();
             try
             {
+                var TrainerID = _context.Table_Trainer.Where(t => t.Device_Token == deviceToken).FirstOrDefault().ID;
                 var obj = _context.GetTrainerVerificationStatus_Result.FromSqlInterpolated<GetTrainerVerificationStatus_Result>($"Execute SP_GetTrainerVerificationStatus {TrainerID}");
                 var result = from row in obj.AsEnumerable()
                              group row by (new
