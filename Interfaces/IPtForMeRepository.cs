@@ -20,8 +20,8 @@ namespace Pt_For_Me.Interfaces
         ResponseModel<object> GetAllPendingTrainers();
         ResponseModel<object> GetTrainerVerificationStatus(int TrainerID);
         ResponseModel<object> GetTrainerByTrainerID(int TrainerID);
-        ResponseModel<bool> AddClientHealthRiskOrInjury(int UserID, string healthRisk, string injury);
-        ResponseModel<bool> AddClientGoal(int UserID, string description, int targetWeight, DateTime date);
+        ResponseModel<bool> AddClientHealthRiskOrInjury(string Device_Token, string healthRisk, string injury);
+        ResponseModel<bool> AddClientGoal(string Device_Token , string description, int targetWeight, DateTime date);
         ResponseModel<object> GetGeneralPackages();
         ResponseModel<bool> AcceptTrainer(int TrainerID);
         ResponseModel<bool> DeclineTrainer(int TrainerID);
@@ -37,19 +37,19 @@ namespace Pt_For_Me.Interfaces
         ResponseModel<bool> AcceptReview(int SessionID);
         ResponseModel<object> GetAcceptedReviewByTrainerID(int TrainerID);
         // ResponseModel<int> GetCallerIDByUserID(int UserID);
-        ResponseModel<bool> AddUserPacakgesByUserID(int UserID, int PackageID, int TrainerID, int Bundle);
+        ResponseModel<bool> AddUserPacakgesByUserID(string DeviceToken, int PackageID, int TrainerID, int Bundle);
         //ResponseModel<bool> AddBookedSessionByUserID(int UserID);
-        ResponseModel<bool> AddBookedSessionByUserID(int UserID, DateTime startTime, DateTime endTime);
+        ResponseModel<bool> AddBookedSessionByUserID(string Device_Token , DateTime startTime, DateTime endTime);
         // ResponseModel<object> GetSessionInfoByTrainerID (int TrainerID);
         ResponseModel<object> GetTrainersBySpecialtyKeyword(string Keyword);
         ResponseModel<object> GetClientInfoByUserID(string username);
-        ResponseModel<bool> AddBlockedTimeByTrainerID(int TrainerID, DateTime startTime, DateTime endTime);
-        ResponseModel<object> GetSessionInfoByTrainerID(int TrainerID);
-        ResponseModel<object> GetSessionInfoByUserID(int UserID);
+        ResponseModel<bool> AddBlockedTimeByTrainerID(string deviceToken, DateTime startTime, DateTime endTime);
+        ResponseModel<object> GetSessionInfoByTrainerID(string Device_Toke);
+        ResponseModel<object> GetSessionInfoByUserID(string Device_Toke);
         ResponseModel <int> GetTrainerRating(int TrainerID);
-        ResponseModel<object> GetTrainerBlockedTime(int TrainerID);
+        ResponseModel<object> GetTrainerBlockedTime(string Device_Token);
         ResponseModel<Guid> GetUserAuthToken(string username);
-        ResponseModel<bool> AddSessionInfoByUserID(int UserID, int TrainerID, string Review, int Rating);
+        ResponseModel<bool> AddSessionInfoByUserID(string UserID, int TrainerID, string Review, int Rating);
     }
 
 

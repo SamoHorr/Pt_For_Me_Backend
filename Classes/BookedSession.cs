@@ -4,6 +4,7 @@
     {
         public int ID { get; set; }
         public int UserPackageID { get; set;}
+        public string DeviceToken { get; set; }
         public int UserID { get; set;  }
         public int TrainerID { get; set; }
         public int RoomID { get; set; }

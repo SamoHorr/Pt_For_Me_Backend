@@ -46,11 +46,12 @@ namespace Pt_For_Me
                 return response;
             }
         }
-        public ResponseModel<object> GetTrainerBlockedTime(int TrainerID)
+        public ResponseModel<object> GetTrainerBlockedTime(string Device_Token)
         {
             ResponseModel<object> response = new ResponseModel<object>();
             try
             {
+         var    TrainerID = _context.Table_Trainer.Where(t => t.Device_Token == Device_Token).FirstOrDefault().ID;
                 response.Data = _context.Table_TrainerBlockedDay.Where(t => t.TrainerID == TrainerID).FirstOrDefault();
                 response.IsSuccess = true;
                 return response;
@@ -738,7 +739,7 @@ namespace Pt_For_Me
                 return response;
             }
         }
-        public ResponseModel<bool> AddUserPacakgesByUserID(int UserID, int PackageID, int TrainerID, int Bundle)
+        public ResponseModel<bool> AddUserPacakgesByUserID( string DeviceToken, int PackageID, int TrainerID, int Bundle)
         {
             ResponseModel<bool> response = new ResponseModel<bool>();
 
@@ -748,6 +749,7 @@ namespace Pt_For_Me
                 response.IsSuccess = true;
                 response.Message = "ERROR OCCURED - INVALID INFORMATION ";
 
+                var UserID = _context.Table_User.Where(u => u.Device_Token == DeviceToken).FirstOrDefault().ID;
                 //Table_UserPackage package = _context.Table_UserPackage.Where(p => p.UserID == UserID && p.TrainerID = TrainerID).FirstOrDefault();
                 Table_UserPackage package = _context.Table_UserPackage.FirstOrDefault(p => p.UserID == UserID && p.TrainerID == TrainerID);
 
@@ -789,7 +791,7 @@ namespace Pt_For_Me
                 return response;
             }
         }
-        public ResponseModel<bool> AddBookedSessionByUserID(int UserID, DateTime startTime, DateTime endTime)
+        public ResponseModel<bool> AddBookedSessionByUserID(string DeviceToken, DateTime startTime, DateTime endTime)
         {
             ResponseModel<bool> response = new ResponseModel<bool>();
             try
@@ -799,7 +801,8 @@ namespace Pt_For_Me
                 response.Message = "Cannot book a session currently";
 
                 // to check if the user has any/or some hours left
-                Table_UserPackage userPackage = _context.Table_UserPackage.FirstOrDefault(p => p.UserID == UserID);
+                var userID = _context.Table_User.Where(u => u.Device_Token == DeviceToken).FirstOrDefault().ID;
+                Table_UserPackage userPackage = _context.Table_UserPackage.FirstOrDefault(p => p.UserID == userID);
 
                 if (userPackage != null)
                 {
@@ -840,7 +843,7 @@ namespace Pt_For_Me
                             Table_BookedSession bookedSession = new Table_BookedSession()
                             {
                                 UserPackageID = userPackageID,
-                                UserID = UserID,
+                                UserID = userID,
                                 TrainerID = trainerID,
                                 RoomID = roomID,
                                 Start_Time = startTime,
@@ -885,7 +888,7 @@ namespace Pt_For_Me
             }
         }
 
-        public ResponseModel<bool> AddBlockedTimeByTrainerID(int TrainerID, DateTime startTime, DateTime endTime)
+        public ResponseModel<bool> AddBlockedTimeByTrainerID(string deviceToken, DateTime startTime, DateTime endTime)
         {
             ResponseModel<bool> response = new ResponseModel<bool>();
             try
@@ -894,7 +897,7 @@ namespace Pt_For_Me
                 response.IsSuccess = true;
                 response.Message = "ERROR OCCURED - INVALID INFORMATION";
 
-
+                var TrainerID = _context.Table_Trainer.Where(t => t.Device_Token == deviceToken).FirstOrDefault().ID;
                 Table_TrainerBlockedDay blockedDay = new Table_TrainerBlockedDay();
                 blockedDay.TrainerID = TrainerID;
                 blockedDay.Day_BlockedStart = startTime;
@@ -1004,11 +1007,12 @@ namespace Pt_For_Me
                         return response;
                     }
                 }*/
-        public ResponseModel<object> GetSessionInfoByTrainerID(int TrainerID)
+        public ResponseModel<object> GetSessionInfoByTrainerID(string Device_Token)
         {
             ResponseModel<object> response = new ResponseModel<object>();
             try
             {
+                var TrainerID = _context.Table_Trainer.Where(t => t.Device_Token == Device_Token).FirstOrDefault().ID;
                 var obj = _context.GetSessionInfoByTrainerID_Result.FromSqlInterpolated<GetSessionInfoByTrainerID_Result>($"Execute SP_GetSessionInfoByTrainerID {TrainerID}");
                 var result = from row in obj.AsEnumerable()
                              select new
@@ -1034,11 +1038,12 @@ namespace Pt_For_Me
             }
 
         }
-        public ResponseModel<object> GetSessionInfoByUserID(int UserID)
+        public ResponseModel<object> GetSessionInfoByUserID(string Device_Token)
         {
             ResponseModel<object> response = new ResponseModel<object>();
             try
             {
+                var UserID = _context.Table_User.Where(u => u.Device_Token == Device_Token).FirstOrDefault().ID;
                 var obj = _context.GetSessionInfoByUserID_Result.FromSqlInterpolated<GetSessionInfoByUserID_Result>($"Execute SP_GetSessionInfoByUserID {UserID}");
                 var result = from row in obj.AsEnumerable()
                              select new
@@ -1063,7 +1068,7 @@ namespace Pt_For_Me
             }
 
         }
-        public ResponseModel<bool> AddClientHealthRiskOrInjury(int UserID, string healthRisk, string injury)
+        public ResponseModel<bool> AddClientHealthRiskOrInjury(string Device_Token, string healthRisk, string injury)
         {
             ResponseModel<bool> response = new ResponseModel<bool>();
 
@@ -1072,14 +1077,14 @@ namespace Pt_For_Me
                 response.Data = false;
                 response.IsSuccess = true;
                 response.Message = "Unable to save the health risk added to this client. Try again later.";
-
-                Table_Health goal = _context.Table_Health.Where(h => h.UserID == UserID).FirstOrDefault();
+                var userID = _context.Table_User.Where(u => u.Device_Token == Device_Token).FirstOrDefault().ID;
+                Table_Health goal = _context.Table_Health.Where(h => h.UserID == userID).FirstOrDefault();
                 if (goal == null)
                 {
 
                     Table_Health newHealth = new Table_Health
                     {
-                        UserID = UserID,
+                        UserID = userID,
                         HealthRisk = healthRisk,
                         Injury = injury,
 
@@ -1105,7 +1110,7 @@ namespace Pt_For_Me
             }
         }
 
-        public ResponseModel<bool> AddClientGoal(int UserID, string description, int targetWeight, DateTime date)
+        public ResponseModel<bool> AddClientGoal(string Device_Token , string description, int targetWeight, DateTime date)
         {
             ResponseModel<bool> response = new ResponseModel<bool>();
 
@@ -1115,13 +1120,14 @@ namespace Pt_For_Me
                 response.IsSuccess = true;
                 response.Message = "Unable to save the goals to this client. Try again later.";
 
-                Table_Goal goal = _context.Table_Goal.Where(g => g.UserID == UserID).FirstOrDefault();
+                var userID = _context.Table_User.Where(u => u.Device_Token == Device_Token).FirstOrDefault().ID;
+                Table_Goal goal = _context.Table_Goal.Where(g => g.UserID == userID).FirstOrDefault();
                 if (goal == null)
                 {
 
                     Table_Goal newHealth = new Table_Goal
                     {
-                        UserID = UserID,
+                        UserID = userID,
                         Description = description,
                         TargetWeight = targetWeight,
                         Date = date,
@@ -1145,7 +1151,7 @@ namespace Pt_For_Me
                 return response;
             }
         }
-         public ResponseModel<bool> AddSessionInfoByUserID(int UserID , int TrainerID , string Review , int Rating )
+         public ResponseModel<bool> AddSessionInfoByUserID(string Device_Token, int TrainerID , string Review , int Rating )
         {
             ResponseModel<bool> response = new ResponseModel<bool>();
 
@@ -1155,6 +1161,7 @@ namespace Pt_For_Me
                 response.IsSuccess = true;
                 response.Message = "Unable to save the session .";
 
+                var UserID = _context.Table_User.Where(u => u.Device_Token == Device_Token).FirstOrDefault().ID;
                 Table_Session session = new Table_Session();
                 {
 

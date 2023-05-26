@@ -63,7 +63,7 @@ namespace Pt_For_Me.Controllers
         {
             try
             {
-                var result = _PtForMeRepository.GetTrainerBlockedTime(trainer.id);
+                var result = _PtForMeRepository.GetTrainerBlockedTime(trainer.deviceToken);
                 return Ok(result);
             }
             catch (Exception e)
@@ -143,12 +143,12 @@ namespace Pt_For_Me.Controllers
 
             if (isValid)
             {
-                return Ok("Token is valid.");
+                return Ok(new { message = "Token is valid." });// return Ok("Token is valid.");
             }
             else
             {
-                return Unauthorized("Token is invalid or expired.");
-            }
+                return Unauthorized(new { message = "Token is invalid or expired." });// return Unauthorized("Token is invalid or expired.");
+            }
         }
 
 
@@ -301,7 +301,7 @@ namespace Pt_For_Me.Controllers
         }
 
         [Route("GetAcceptedReviewByTrainerID")]
-        [HttpGet]
+        [HttpPost]
         public IActionResult GetAcceptedReviewByTrainerID([FromBody] Session session)
         {
             var result = _PtForMeRepository.GetAcceptedReviewByTrainerID(session.TrainerID);
@@ -313,7 +313,7 @@ namespace Pt_For_Me.Controllers
         [HttpPost]
         public IActionResult AddSessionInfoByUserID([FromBody] Session session)
         {
-            var result = _PtForMeRepository.AddSessionInfoByUserID(session.UserID , session.TrainerID , session.review , session.rating);
+            var result = _PtForMeRepository.AddSessionInfoByUserID(session.Device_Token , session.TrainerID , session.review , session.rating);
             return Ok(result);
         }
 
@@ -329,7 +329,7 @@ namespace Pt_For_Me.Controllers
         [HttpPost]
         public IActionResult AddClientHealthRiskOrInjury([FromBody] Health health)
         {
-            var result = _PtForMeRepository.AddClientHealthRiskOrInjury(health.userID, health.healthRisk, health.Injury);
+            var result = _PtForMeRepository.AddClientHealthRiskOrInjury(health.DeviceToken, health.healthRisk, health.Injury);
             return Ok(result);
         }
 
@@ -337,7 +337,7 @@ namespace Pt_For_Me.Controllers
         [HttpPost]
         public IActionResult AddClientGoal([FromBody] Goal goal)
         {
-            var result = _PtForMeRepository.AddClientGoal(goal.userID, goal.description, goal.targetWeight, goal.date);
+            var result = _PtForMeRepository.AddClientGoal(goal.DeviceToken , goal.description, goal.targetWeight, goal.date);
             return Ok(result);
         }
 
@@ -448,7 +448,7 @@ namespace Pt_For_Me.Controllers
         public IActionResult AddUserPackageByUserID(UserPackage userPackage)
         {
             //int UserID , int PackageID , int TrainerID ,  DateTime startime , DateTime endtime , int Bundle
-            var result = _PtForMeRepository.AddUserPacakgesByUserID(userPackage.UserID, userPackage.PackageID, userPackage.TrainerID, userPackage.Bundle);
+            var result = _PtForMeRepository.AddUserPacakgesByUserID(userPackage.DeviceToken, userPackage.PackageID, userPackage.TrainerID, userPackage.Bundle);
             return Ok(result);
         }
         [Route("AddBookedSessionByUserID")]
@@ -456,12 +456,12 @@ namespace Pt_For_Me.Controllers
         public IActionResult AddBookedSessionByUserID(BookedSession bookedSession)
         {
             //int UserID , int PackageID , int TrainerID ,  DateTime startime , DateTime endtime , int Bundle
-            var result = _PtForMeRepository.AddBookedSessionByUserID(bookedSession.UserID, bookedSession.startTime, bookedSession.endTime);
+            var result = _PtForMeRepository.AddBookedSessionByUserID(bookedSession.DeviceToken, bookedSession.startTime, bookedSession.endTime);
             return Ok(result);
         }
 
         [Route("GetTrainersBySpecialtyKeyword")]
-        [HttpGet]
+        [HttpPost]
         public IActionResult GetTrainersBySpecialtyKeyword([FromBody] KeywordRequest request)
         {
             var result = _PtForMeRepository.GetTrainersBySpecialtyKeyword(request.Keyword);
@@ -477,18 +477,18 @@ namespace Pt_For_Me.Controllers
         }
 
         [Route("GetSessionInfoByTrainerID")]
-        [HttpGet]
+        [HttpPost]
         public IActionResult GetSessionInfoByTrainerID([FromBody] Trainer trainer)
         {
-            var result = _PtForMeRepository.GetSessionInfoByTrainerID(trainer.id);
+            var result = _PtForMeRepository.GetSessionInfoByTrainerID(trainer.deviceToken);
             return Ok(result);
         }
 
         [Route("GetSessionInfoByUserID")]
-        [HttpGet]
+        [HttpPost]
         public IActionResult GetSessionInfoByUserID([FromBody] User user)
         {
-            var result = _PtForMeRepository.GetSessionInfoByUserID(user.id);
+            var result = _PtForMeRepository.GetSessionInfoByUserID(user.DeviceToken);
             return Ok(result);
         }
 
@@ -497,12 +497,12 @@ namespace Pt_For_Me.Controllers
         [HttpPost]
         public IActionResult AddBlockedTimeByTrainerID([FromBody] TrainerBlock trainer)
         {
-            var result = _PtForMeRepository.AddBlockedTimeByTrainerID(trainer.TrainerID, trainer.Day_BlockedStart, trainer.Day_BlockedEnd);
+            var result = _PtForMeRepository.AddBlockedTimeByTrainerID(trainer.deviceToken, trainer.Day_BlockedStart, trainer.Day_BlockedEnd);
             return Ok(result);
         }
 
         [Route("GetTrainerRating")]
-        [HttpGet]
+        [HttpPost]
         public IActionResult GetTrainerRating([FromBody] Trainer trainer)
         {
             var result = _PtForMeRepository.GetTrainerRating(trainer.id);

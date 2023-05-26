@@ -3,6 +3,7 @@
     public class TrainerBlock
     {
        public int TrainerID { get; set; }
+        public string deviceToken { get; set; }
         public DateTime Day_BlockedStart { get; set; }
         public DateTime Day_BlockedEnd { get; set; }
     }
